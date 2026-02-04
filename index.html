@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy 18th!</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&display=swap" rel="stylesheet">
+    
     <style>
         :root { --bg: #0a0a0a; --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,6 +23,7 @@
         #tap-msg {
             position: relative; z-index: 10001; color: #fff; letter-spacing: 5px;
             font-size: 0.8rem; opacity: 0.6; animation: blink 2s infinite;
+            text-align: center; padding: 0 20px;
         }
         @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
 
@@ -32,20 +35,33 @@
             display: flex; flex-direction: column; justify-content: space-between; padding: 60px;
             opacity: 0; transition: opacity 2s ease;
         }
-        .hero h1 { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; text-transform: uppercase; }
+
+        /* Responsive Text Scaling */
+        .hero h1 { font-size: clamp(2.5rem, 10vw, 8rem); line-height: 0.8; text-transform: uppercase; }
         .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; }
-        .age { font-size: clamp(5rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
+        .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
+
+        /* --- MEDIA QUERY HP --- */
+        @media (max-width: 600px) {
+            .hero { padding: 30px; }
+            .hero-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .photo-grid { width: 250%; } /* Grid lebih lebar di HP agar rotasi aman */
+            .photo-grid img { height: 250px; } /* Foto lebih kecil di HP */
+            .floating-text h2 { font-size: 1.8rem; }
+        }
 
         /* --- SCROLL COLLAGE --- */
         .scroll-wrapper { position: relative; height: 350vh; background: #000; }
-        .sticky-box { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .sticky-box { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         .photo-grid {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 160%; 
             transform: rotate(-15deg) translateY(400px); opacity: 0.4; will-change: transform;
         }
         .photo-grid img { width: 100%; height: 400px; object-fit: cover; border-radius: 4px; }
         .floating-text { position: absolute; z-index: 100; text-align: center; pointer-events: none; width: 90%; }
-        .floating-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4.5rem); text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .floating-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 6vw, 4.5rem); text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .floating-text h2 span { font-style: italic; font-size: 1.4em; }
+
         footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; letter-spacing: 3px; }
     </style>
 </head>
@@ -63,7 +79,7 @@
     <section class="hero" id="hero-content">
         <h1>HAPPY<br>BIRTHDAY</h1>
         <div class="hero-footer">
-            <div style="letter-spacing: 2px;">FEBUARI 12, 2026</div>
+            <div style="letter-spacing: 2px; font-size: 0.8rem;">FEBRUARI 12, 2026</div>
             <div class="age">18th</div>
         </div>
     </section>
@@ -100,13 +116,15 @@
 
         function createHeart(centerX, centerY) {
             const color = '#ff4d6d';
-            for (let i = 0; i < 150; i++) {
-                const angle = (i / 150) * Math.PI * 2;
+            const particleCount = window.innerWidth < 600 ? 80 : 150;
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (i / particleCount) * Math.PI * 2;
                 const x = 16 * Math.pow(Math.sin(angle), 3);
                 const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
                 particles.push({
                     x: centerX, y: centerY,
-                    vx: x * 0.4, vy: y * 0.4,
+                    vx: x * (window.innerWidth < 600 ? 0.25 : 0.4), 
+                    vy: y * (window.innerWidth < 600 ? 0.25 : 0.4),
                     alpha: 1, color: color
                 });
             }
@@ -126,15 +144,16 @@
             requestAnimationFrame(animate);
         }
 
-        // Loop kembang api hati otomatis di intro
         const heartInterval = setInterval(() => {
             createHeart(canvas.width / 2, canvas.height / 2);
         }, 1500);
 
         function startExperience() {
             clearInterval(heartInterval);
-            document.getElementById('musikUltah').play();
-            createHeart(canvas.width / 2, canvas.height / 2); // Ledakan terakhir
+            const audio = document.getElementById('musikUltah');
+            audio.play().catch(e => console.log("Audio play deferred"));
+            
+            createHeart(canvas.width / 2, canvas.height / 2); 
             
             document.getElementById('intro-overlay').style.opacity = '0';
             document.getElementById('hero-content').style.opacity = '1';
@@ -146,7 +165,13 @@
 
         window.addEventListener('scroll', () => {
             const st = window.pageYOffset;
-            document.getElementById('gridAnim').style.transform = `rotate(-15deg) translateY(${400 - (st * 0.5)}px)`;
+            const grid = document.getElementById('gridAnim');
+            grid.style.transform = `rotate(-15deg) translateY(${400 - (st * 0.5)}px)`;
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
 
         animate();
