@@ -15,7 +15,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; }
 
-        /* --- 1. INTRO --- */
+        /* --- 1. INTRO OVERLAY --- */
         #intro-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10000; background: #000; cursor: pointer;
@@ -29,7 +29,7 @@
         /* --- 2. HERO SECTION --- */
         .hero {
             height: 100vh; width: 100%; position: relative;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), 
                         url('asset/foto1.png') no-repeat center center/cover;
             display: flex; flex-direction: column; justify-content: space-between; padding: 60px;
             opacity: 0; transition: opacity 1.5s ease;
@@ -39,61 +39,66 @@
         .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; }
         .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
 
-        /* --- 3. SLIDE 2: AUTO SCROLL GRID --- */
+        /* --- 3. SLIDE 2: 4 BARIS INFINITE SCROLL --- */
         .scroll-wrapper { 
             position: relative; height: 100vh; background: #000; 
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
-        .grid-container { display: flex; flex-direction: column; gap: 20px; width: 130%; transform: rotate(-10deg) scale(1.1); }
-        .row { display: flex; gap: 20px; width: max-content; }
-        .row-left { animation: scrollLeft 40s linear infinite; }
-        .row-right { animation: scrollRight 40s linear infinite; }
-        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-        .row img { width: 250px; height: 250px; object-fit: cover; border-radius: 8px; opacity: 0.4; }
-        
-        .floating-text-slide2 { position: absolute; z-index: 100; text-align: center; pointer-events: none; }
-        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem); }
+        .grid-container { display: flex; flex-direction: column; gap: 15px; width: 160%; transform: rotate(-10deg) scale(1.3); }
+        .row { display: flex; gap: 15px; width: max-content; }
+        .row-left { animation: scrollLeft 35s linear infinite; }
+        .row-right { animation: scrollRight 35s linear infinite; }
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-50% - 7.5px)); } }
+        @keyframes scrollRight { 0% { transform: translateX(calc(-50% - 7.5px)); } 100% { transform: translateX(0); } }
+        .row img { width: 220px; height: 280px; object-fit: cover; border-radius: 10px; opacity: 0.4; }
+        .floating-text-slide2 { position: absolute; z-index: 100; text-align: center; pointer-events: none; width: 100%; }
+        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem); text-shadow: 0 0 30px #000; }
 
-        /* --- 4. SLIDE 3: TATA LETAK GELAP (Teks Kiri, Foto Kanan) --- */
+        /* --- 4. SLIDE 3: PESAN (GELAP & PUTIH) --- */
         .message-section {
             min-height: 100vh; width: 100%; padding: 80px 8%;
             display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px;
-            align-items: center; background: #000; /* Latar Belakang Gelap */
-            color: #fff; /* Tulisan Putih */
+            align-items: center; background: #000; color: #fff;
         }
         .text-content { opacity: 0; transform: translateX(-50px); }
         .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3.5rem); margin-bottom: 25px; color: var(--accent); }
         .text-content p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; text-align: justify; color: #ddd; }
-
-        .collage-content {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-            opacity: 0; transform: translateX(50px);
-        }
+        .collage-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; opacity: 0; transform: translateX(50px); }
         .collage-content img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        .collage-content img:first-child { grid-column: span 2; height: 320px; } 
+        .collage-content img:first-child { grid-column: span 2; height: 320px; }
 
-        .btn-wish {
-            display: inline-block; padding: 15px 35px; background: var(--accent); color: white;
-            text-decoration: none; border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px;
-            transition: 0.3s ease;
+        /* --- 5. SLIDE 4: KUE & TIUP LILIN --- */
+        .cake-section {
+            height: 100vh; width: 100%; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .btn-wish:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
+        .instruction { color: var(--accent); letter-spacing: 2px; font-size: 1.2rem; margin-bottom: 60px; text-align: center; animation: blink 2s infinite; }
+        .cake { position: relative; width: 200px; height: 150px; background: #f4e1d2; border-radius: 10px 10px 0 0; }
+        .cake::after { content: ''; position: absolute; bottom: -10px; left: -10%; width: 120%; height: 20px; background: #fff; border-radius: 20px; }
+        .candle { position: absolute; width: 12px; height: 50px; background: #ff4d6d; top: -50px; left: 50%; transform: translateX(-50%); border-radius: 4px; }
+        .flame {
+            position: absolute; width: 15px; height: 25px; background: orange; top: -25px; left: -1px;
+            border-radius: 50% 50% 20% 20%; box-shadow: 0 0 20px orange;
+            animation: flicker 0.1s infinite alternate; transition: 0.5s;
+        }
+        .flame.off { opacity: 0; transform: scale(0); pointer-events: none; }
+        .wish-final { margin-top: 50px; opacity: 0; transform: translateY(20px); transition: 1.5s; text-align: center; }
+        .wish-final.show { opacity: 1; transform: translateY(0); }
+        .btn-wa { display: inline-block; margin-top: 20px; padding: 15px 35px; background: var(--accent); color: white; text-decoration: none; border-radius: 50px; letter-spacing: 1px; }
 
         @media (max-width: 900px) {
-            .message-section { grid-template-columns: 1fr; text-align: center; padding: 60px 5%; }
-            .text-content p { text-align: center; }
-            .collage-content { order: -1; margin-bottom: 30px; } 
+            .message-section { grid-template-columns: 1fr; text-align: center; }
+            .collage-content { order: -1; }
         }
 
-        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; letter-spacing: 3px; background: #000; }
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; background: #000; }
     </style>
 </head>
 <body>
 
     <div id="intro-overlay" onclick="startExperience()">
         <canvas id="canvas-fireworks"></canvas>
-        <div id="tap-msg">DI PENCET YA SAYANG</div>
+        <div id="tap-msg">KLIK UNTUK MEMBUKA KEJUTAN ✨</div>
     </div>
 
     <audio id="musikUltah" loop>
@@ -110,40 +115,53 @@
 
     <section class="scroll-wrapper">
         <div class="floating-text-slide2">
-            <h2 class="anim-scroll">3 things you get when<br>you turn <span>18</span></h2>
+            <h2 class="anim-scroll">Happy Birthday<br>to the <span>Best Girl</span></h2>
         </div>
         <div class="grid-container">
             <div class="row row-left">
-                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto1.png">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png">
             </div>
             <div class="row row-right">
-                <img src="asset/foto2.png"><img src="asset/foto4.png"><img src="asset/foto1.png"><img src="asset/foto3.png"><img src="asset/foto2.png">
+                <img src="asset/foto6.png"><img src="asset/foto5.png"><img src="asset/foto4.png"><img src="asset/foto3.png"><img src="asset/foto2.png"><img src="asset/foto1.png">
+                <img src="asset/foto6.png"><img src="asset/foto5.png"><img src="asset/foto4.png"><img src="asset/foto3.png"><img src="asset/foto2.png"><img src="asset/foto1.png">
+            </div>
+            <div class="row row-left">
+                <img src="asset/foto2.png"><img src="asset/foto4.png"><img src="asset/foto1.png"><img src="asset/foto6.png"><img src="asset/foto3.png"><img src="asset/foto5.png">
+                <img src="asset/foto2.png"><img src="asset/foto4.png"><img src="asset/foto1.png"><img src="asset/foto6.png"><img src="asset/foto3.png"><img src="asset/foto5.png">
+            </div>
+            <div class="row row-right">
+                <img src="asset/foto5.png"><img src="asset/foto3.png"><img src="asset/foto6.png"><img src="asset/foto1.png"><img src="asset/foto4.png"><img src="asset/foto2.png">
+                <img src="asset/foto5.png"><img src="asset/foto3.png"><img src="asset/foto6.png"><img src="asset/foto1.png"><img src="asset/foto4.png"><img src="asset/foto2.png">
             </div>
         </div>
     </section>
 
     <section class="message-section">
-        <div class="text-content" id="trigger-ucapan">
+        <div class="text-content">
             <h2>The first 1 on my mind</h2>
             <p>
                 <b>HAHHAHAHAH YESS ALWAYSS UU!!</b><br>
-                YAP kamu masih jadi orang yang selalu muncul dipikiran aku selama 2 tahun lebih!!! 
-                MAKASIH YAAA UDAH ADA BUAT KUU JUGAA DAN SELALU SUPPORT AKU. 
-                Aku nggak akan bosan kasih tau kalau aku bener-bener beruntung dapetin kamu. 
-                Mama aku juga nggak banyak komen soal kamu karena kamu anaknya baik, malah suka khawatir kamu diapain sama aku hehehe.
+                YAP kamu masih jadi orang yang selalu muncul dipikiran aku selama 2 tahun lebih!!! MAKASIH YAAA UDAH ADA BUAT KUU JUGAA DAN SELALU SUPPORT AKU. 
                 <br><br>
-                Semangat kuliahnya, jangan takut ambil DKV!! U CAN DO IT!! 
-                KAMU BISAA semua hal selalu dari 0 jadi jangan minder sama kemampuan orang lain, karena dulu mereka mulai dari 0 kayak kamu!!
+                Semangat kuliahnya, jangan takut ambil DKV!! U CAN DO IT!! Kamu bisa mulai semuanya dari nol, jangan minder sama orang lain.
             </p>
-            <a href="https://wa.me/628123456789" class="btn-wish">KIRIM PESAN BALIK</a>
+            <p>I love you more than words can say.</p>
         </div>
-
         <div class="collage-content">
-            <img src="asset/foto2.png">
-            <img src="asset/foto3.png">
-            <img src="asset/foto4.png">
-            <img src="asset/foto5.png">
+            <img src="asset/foto2.png"><img src="asset/foto3.png">
+            <img src="asset/foto4.png"><img src="asset/foto5.png">
             <img src="asset/foto6.png">
+        </div>
+    </section>
+
+    <section class="cake-section">
+        <div class="instruction" id="instruksi-tiup">MAKE A WISH & BLOW THE CANDLE 🕯️<br><small>(Tiup lubang mikrofon HP/Laptopmu)</small></div>
+        <div class="cake"><div class="candle"><div class="flame" id="api-lilin"></div></div></div>
+        <div class="wish-final" id="wish-teks">
+            <h2 style="color:var(--accent); font-size: 3rem;">HBD SAYANG! 🎉</h2>
+            <p>Semoga semua keinginanmu tercapai di umur ke-18 ini.</p>
+            <a href="https://wa.me/628123456789" class="btn-wa">CHAT AKU ❤️</a>
         </div>
     </section>
 
@@ -154,35 +172,49 @@
 
         function jalankanAnimasi() {
             gsap.to(".anim-hero", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, stagger: 0.3 });
-            
-            gsap.to(".anim-scroll", {
-                scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" },
-                opacity: 1, y: 0, duration: 1.5
-            });
-
-            // Animasi Slide 3 Masuk
-            gsap.to(".text-content", {
-                scrollTrigger: { trigger: ".message-section", start: "top 60%" },
-                opacity: 1, x: 0, duration: 1.2, ease: "power2.out"
-            });
-
-            gsap.to(".collage-content", {
-                scrollTrigger: { trigger: ".message-section", start: "top 60%" },
-                opacity: 1, x: 0, duration: 1.2, delay: 0.3, ease: "power2.out"
-            });
+            gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1.5 });
+            gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 60%" }, opacity: 1, x: 0, duration: 1.2 });
+            gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 60%" }, opacity: 1, x: 0, duration: 1.2, delay: 0.3 });
         }
 
-        // --- FIREWORKS ---
+        function initMic() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const ctx = new AudioContext();
+                    const analyser = ctx.createAnalyser();
+                    const source = ctx.createMediaStreamSource(stream);
+                    const processor = ctx.createScriptProcessor(2048, 1, 1);
+                    source.connect(analyser); analyser.connect(processor); processor.connect(ctx.destination);
+                    processor.onaudioprocess = function() {
+                        const data = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(data);
+                        let volume = data.reduce((a, b) => a + b) / data.length;
+                        if (volume > 45) matikanLilin();
+                    };
+                }).catch(() => { document.getElementById('api-lilin').onclick = matikanLilin; });
+            }
+        }
+
+        function matikanLilin() {
+            const api = document.getElementById('api-lilin');
+            if (!api.classList.contains('off')) {
+                api.classList.add('off');
+                document.getElementById('wish-teks').classList.add('show');
+                document.getElementById('instruksi-tiup').innerHTML = "WISH GRANTED! ✨";
+            }
+        }
+
+        // Fireworks logic
         const canvas = document.getElementById('canvas-fireworks');
         const ctx = canvas.getContext('2d');
         let particles = [];
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         function createHeart(centerX, centerY) {
-            for (let i = 0; i < 80; i++) {
-                const angle = (i / 80) * Math.PI * 2;
+            for (let i = 0; i < 50; i++) {
+                const angle = (i / 50) * Math.PI * 2;
                 const x = 16 * Math.pow(Math.sin(angle), 3);
                 const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
-                particles.push({ x: centerX, y: centerY, vx: x * 0.3, vy: y * 0.3, alpha: 1 });
+                particles.push({ x: centerX, y: centerY, vx: x * 0.25, vy: y * 0.25, alpha: 1 });
             }
         }
         function animate() {
@@ -195,18 +227,19 @@
             });
             requestAnimationFrame(animate);
         }
-        const heartInterval = setInterval(() => createHeart(canvas.width/2, canvas.height/2), 1500);
 
         function startExperience() {
-            clearInterval(heartInterval);
-            document.getElementById('musikUltah').play().catch(e => console.log("Music play blocked"));
+            document.getElementById('musikUltah').play();
             document.getElementById('intro-overlay').style.opacity = '0';
-            document.getElementById('hero-content').style.opacity = '1';
             setTimeout(() => { 
                 document.getElementById('intro-overlay').style.display = 'none'; 
+                document.getElementById('hero-content').style.opacity = '1';
                 jalankanAnimasi();
+                initMic();
             }, 1000);
         }
+
+        setInterval(() => createHeart(canvas.width/2, canvas.height/2), 1500);
         animate();
         window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     </script>
