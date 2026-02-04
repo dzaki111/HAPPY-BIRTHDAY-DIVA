@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy 18th!</title>
+    <title>Happy 18th Birthday!</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&display=swap" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
-        :root { --bg: #0a0a0a; --text: #ffffff; }
+        :root { --bg: #0a0a0a; --text: #ffffff; --accent: #ff4d6d; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; }
 
-        /* --- INTRO KEMBANG API --- */
+        /* --- 1. INTRO --- */
         #intro-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10000; background: #000; cursor: pointer;
@@ -20,49 +23,70 @@
             transition: opacity 1.5s ease;
         }
         #canvas-fireworks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        #tap-msg {
-            position: relative; z-index: 10001; color: #fff; letter-spacing: 5px;
-            font-size: 0.8rem; opacity: 0.6; animation: blink 2s infinite;
-            text-align: center; padding: 0 20px;
-        }
+        #tap-msg { position: relative; z-index: 10001; color: #fff; letter-spacing: 5px; font-size: 0.8rem; animation: blink 2s infinite; text-align: center; }
         @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
 
-        /* --- HERO SECTION --- */
+        /* --- 2. HERO SECTION --- */
         .hero {
             height: 100vh; width: 100%; position: relative;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
                         url('asset/foto1.png') no-repeat center center/cover;
             display: flex; flex-direction: column; justify-content: space-between; padding: 60px;
-            opacity: 0; transition: opacity 2s ease;
+            opacity: 0; transition: opacity 1.5s ease;
         }
-
-        /* Responsive Text Scaling */
+        .hero h1, .hero-footer div { opacity: 0; transform: translateY(30px); filter: blur(10px); }
         .hero h1 { font-size: clamp(2.5rem, 10vw, 8rem); line-height: 0.8; text-transform: uppercase; }
         .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; }
         .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
 
-        /* --- MEDIA QUERY HP --- */
-        @media (max-width: 600px) {
-            .hero { padding: 30px; }
-            .hero-footer { flex-direction: column; align-items: flex-start; gap: 10px; }
-            .photo-grid { width: 250%; } /* Grid lebih lebar di HP agar rotasi aman */
-            .photo-grid img { height: 250px; } /* Foto lebih kecil di HP */
-            .floating-text h2 { font-size: 1.8rem; }
+        /* --- 3. SLIDE 2: AUTO SCROLL GRID --- */
+        .scroll-wrapper { 
+            position: relative; height: 100vh; background: #000; 
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .grid-container { display: flex; flex-direction: column; gap: 20px; width: 130%; transform: rotate(-10deg) scale(1.1); }
+        .row { display: flex; gap: 20px; width: max-content; }
+        .row-left { animation: scrollLeft 40s linear infinite; }
+        .row-right { animation: scrollRight 40s linear infinite; }
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        .row img { width: 250px; height: 250px; object-fit: cover; border-radius: 8px; opacity: 0.4; }
+        
+        .floating-text-slide2 { position: absolute; z-index: 100; text-align: center; pointer-events: none; }
+        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4.5rem); }
+
+        /* --- 4. SLIDE 3: TATA LETAK GELAP (Teks Kiri, Foto Kanan) --- */
+        .message-section {
+            min-height: 100vh; width: 100%; padding: 80px 8%;
+            display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px;
+            align-items: center; background: #000; /* Latar Belakang Gelap */
+            color: #fff; /* Tulisan Putih */
+        }
+        .text-content { opacity: 0; transform: translateX(-50px); }
+        .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3.5rem); margin-bottom: 25px; color: var(--accent); }
+        .text-content p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; text-align: justify; color: #ddd; }
+
+        .collage-content {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            opacity: 0; transform: translateX(50px);
+        }
+        .collage-content img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .collage-content img:first-child { grid-column: span 2; height: 320px; } 
+
+        .btn-wish {
+            display: inline-block; padding: 15px 35px; background: var(--accent); color: white;
+            text-decoration: none; border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px;
+            transition: 0.3s ease;
+        }
+        .btn-wish:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 77, 109, 0.4); }
+
+        @media (max-width: 900px) {
+            .message-section { grid-template-columns: 1fr; text-align: center; padding: 60px 5%; }
+            .text-content p { text-align: center; }
+            .collage-content { order: -1; margin-bottom: 30px; } 
         }
 
-        /* --- SCROLL COLLAGE --- */
-        .scroll-wrapper { position: relative; height: 350vh; background: #000; }
-        .sticky-box { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .photo-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 160%; 
-            transform: rotate(-15deg) translateY(400px); opacity: 0.4; will-change: transform;
-        }
-        .photo-grid img { width: 100%; height: 400px; object-fit: cover; border-radius: 4px; }
-        .floating-text { position: absolute; z-index: 100; text-align: center; pointer-events: none; width: 90%; }
-        .floating-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 6vw, 4.5rem); text-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .floating-text h2 span { font-style: italic; font-size: 1.4em; }
-
-        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; letter-spacing: 3px; }
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; letter-spacing: 3px; background: #000; }
     </style>
 </head>
 <body>
@@ -77,104 +101,114 @@
     </audio>
 
     <section class="hero" id="hero-content">
-        <h1>HAPPY<br>BIRTHDAY</h1>
+        <h1 class="anim-hero">HAPPY<br>BIRTHDAY</h1>
         <div class="hero-footer">
-            <div style="letter-spacing: 2px; font-size: 0.8rem;">FEBRUARI 12, 2026</div>
-            <div class="age">18th</div>
+            <div class="date anim-hero">FEBRUARI 12, 2026</div>
+            <div class="age anim-hero">18th</div>
         </div>
     </section>
 
     <section class="scroll-wrapper">
-        <div class="sticky-box">
-            <div class="floating-text">
-                <h2>3 things you get when<br>you turn <span>18</span></h2>
+        <div class="floating-text-slide2">
+            <h2 class="anim-scroll">3 things you get when<br>you turn <span>18</span></h2>
+        </div>
+        <div class="grid-container">
+            <div class="row row-left">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto1.png">
             </div>
-            <div class="photo-grid" id="gridAnim">
-                <img src="asset/foto1.png">
-                <img src="asset/foto2.png">
-                <img src="asset/foto3.png">
-                <img src="asset/foto4.png">
-                <img src="asset/foto1.png">
-                <img src="asset/foto2.png">
-                <img src="asset/foto3.png">
-                <img src="asset/foto4.png">
-                <img src="asset/foto1.png">
-                <img src="asset/foto2.png">
+            <div class="row row-right">
+                <img src="asset/foto2.png"><img src="asset/foto4.png"><img src="asset/foto1.png"><img src="asset/foto3.png"><img src="asset/foto2.png">
             </div>
+        </div>
+    </section>
+
+    <section class="message-section">
+        <div class="text-content" id="trigger-ucapan">
+            <h2>The first 1 on my mind</h2>
+            <p>
+                <b>HAHHAHAHAH YESS ALWAYSS UU!!</b><br>
+                YAP kamu masih jadi orang yang selalu muncul dipikiran aku selama 2 tahun lebih!!! 
+                MAKASIH YAAA UDAH ADA BUAT KUU JUGAA DAN SELALU SUPPORT AKU. 
+                Aku nggak akan bosan kasih tau kalau aku bener-bener beruntung dapetin kamu. 
+                Mama aku juga nggak banyak komen soal kamu karena kamu anaknya baik, malah suka khawatir kamu diapain sama aku hehehe.
+                <br><br>
+                Semangat kuliahnya, jangan takut ambil DKV!! U CAN DO IT!! 
+                KAMU BISAA semua hal selalu dari 0 jadi jangan minder sama kemampuan orang lain, karena dulu mereka mulai dari 0 kayak kamu!!
+            </p>
+            <a href="https://wa.me/628123456789" class="btn-wish">KIRIM PESAN BALIK</a>
+        </div>
+
+        <div class="collage-content">
+            <img src="asset/foto2.png">
+            <img src="asset/foto3.png">
+            <img src="asset/foto4.png">
+            <img src="asset/foto5.png">
+            <img src="asset/foto6.png">
         </div>
     </section>
 
     <footer>MADE WITH LOVE &bull; 2026</footer>
 
     <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        function jalankanAnimasi() {
+            gsap.to(".anim-hero", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, stagger: 0.3 });
+            
+            gsap.to(".anim-scroll", {
+                scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" },
+                opacity: 1, y: 0, duration: 1.5
+            });
+
+            // Animasi Slide 3 Masuk
+            gsap.to(".text-content", {
+                scrollTrigger: { trigger: ".message-section", start: "top 60%" },
+                opacity: 1, x: 0, duration: 1.2, ease: "power2.out"
+            });
+
+            gsap.to(".collage-content", {
+                scrollTrigger: { trigger: ".message-section", start: "top 60%" },
+                opacity: 1, x: 0, duration: 1.2, delay: 0.3, ease: "power2.out"
+            });
+        }
+
+        // --- FIREWORKS ---
         const canvas = document.getElementById('canvas-fireworks');
         const ctx = canvas.getContext('2d');
         let particles = [];
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         function createHeart(centerX, centerY) {
-            const color = '#ff4d6d';
-            const particleCount = window.innerWidth < 600 ? 80 : 150;
-            for (let i = 0; i < particleCount; i++) {
-                const angle = (i / particleCount) * Math.PI * 2;
+            for (let i = 0; i < 80; i++) {
+                const angle = (i / 80) * Math.PI * 2;
                 const x = 16 * Math.pow(Math.sin(angle), 3);
                 const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
-                particles.push({
-                    x: centerX, y: centerY,
-                    vx: x * (window.innerWidth < 600 ? 0.25 : 0.4), 
-                    vy: y * (window.innerWidth < 600 ? 0.25 : 0.4),
-                    alpha: 1, color: color
-                });
+                particles.push({ x: centerX, y: centerY, vx: x * 0.3, vy: y * 0.3, alpha: 1 });
             }
         }
-
         function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            particles.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
-                p.alpha -= 0.008;
-                ctx.globalAlpha = p.alpha;
-                ctx.fillStyle = p.color;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
-                if (p.alpha <= 0) particles.splice(i, 1);
+            ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            particles.forEach((p,i) => {
+                p.x+=p.vx; p.y+=p.vy; p.alpha-=0.01;
+                ctx.globalAlpha=p.alpha; ctx.fillStyle='#ff4d6d';
+                ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
+                if(p.alpha<=0) particles.splice(i,1);
             });
             requestAnimationFrame(animate);
         }
-
-        const heartInterval = setInterval(() => {
-            createHeart(canvas.width / 2, canvas.height / 2);
-        }, 1500);
+        const heartInterval = setInterval(() => createHeart(canvas.width/2, canvas.height/2), 1500);
 
         function startExperience() {
             clearInterval(heartInterval);
-            const audio = document.getElementById('musikUltah');
-            audio.play().catch(e => console.log("Audio play deferred"));
-            
-            createHeart(canvas.width / 2, canvas.height / 2); 
-            
+            document.getElementById('musikUltah').play().catch(e => console.log("Music play blocked"));
             document.getElementById('intro-overlay').style.opacity = '0';
             document.getElementById('hero-content').style.opacity = '1';
-            
-            setTimeout(() => {
-                document.getElementById('intro-overlay').style.display = 'none';
-            }, 1500);
+            setTimeout(() => { 
+                document.getElementById('intro-overlay').style.display = 'none'; 
+                jalankanAnimasi();
+            }, 1000);
         }
-
-        window.addEventListener('scroll', () => {
-            const st = window.pageYOffset;
-            const grid = document.getElementById('gridAnim');
-            grid.style.transform = `rotate(-15deg) translateY(${400 - (st * 0.5)}px)`;
-        });
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
         animate();
+        window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     </script>
 </body>
 </html>
