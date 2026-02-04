@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 18th!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #0a0a0a; --text: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; }
+
+        /* --- INTRO KEMBANG API --- */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10000; background: #000; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease;
+        }
+        #canvas-fireworks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #tap-msg {
+            position: relative; z-index: 10001; color: #fff; letter-spacing: 5px;
+            font-size: 0.8rem; opacity: 0.6; animation: blink 2s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; width: 100%; position: relative;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), 
+                        url('asset/foto1.png') no-repeat center center/cover;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 60px;
+            opacity: 0; transition: opacity 2s ease;
+        }
+        .hero h1 { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; text-transform: uppercase; }
+        .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+        .age { font-size: clamp(5rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
+
+        /* --- SCROLL COLLAGE --- */
+        .scroll-wrapper { position: relative; height: 350vh; background: #000; }
+        .sticky-box { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 160%; 
+            transform: rotate(-15deg) translateY(400px); opacity: 0.4; will-change: transform;
+        }
+        .photo-grid img { width: 100%; height: 400px; object-fit: cover; border-radius: 4px; }
+        .floating-text { position: absolute; z-index: 100; text-align: center; pointer-events: none; width: 90%; }
+        .floating-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4.5rem); text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; letter-spacing: 3px; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay" onclick="startExperience()">
+        <canvas id="canvas-fireworks"></canvas>
+        <div id="tap-msg">DI PENCET YA SAYANG</div>
+    </div>
+
+    <audio id="musikUltah" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="hero" id="hero-content">
+        <h1>HAPPY<br>BIRTHDAY</h1>
+        <div class="hero-footer">
+            <div style="letter-spacing: 2px;">FEBUARI 12, 2026</div>
+            <div class="age">18th</div>
+        </div>
+    </section>
+
+    <section class="scroll-wrapper">
+        <div class="sticky-box">
+            <div class="floating-text">
+                <h2>3 things you get when<br>you turn <span>18</span></h2>
+            </div>
+            <div class="photo-grid" id="gridAnim">
+                <img src="asset/foto1.png">
+                <img src="asset/foto2.png">
+                <img src="asset/foto3.png">
+                <img src="asset/foto4.png">
+                <img src="asset/foto1.png">
+                <img src="asset/foto2.png">
+                <img src="asset/foto3.png">
+                <img src="asset/foto4.png">
+                <img src="asset/foto1.png">
+                <img src="asset/foto2.png">
+            </div>
+        </div>
+    </section>
+
+    <footer>MADE WITH LOVE &bull; 2026</footer>
+
+    <script>
+        const canvas = document.getElementById('canvas-fireworks');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function createHeart(centerX, centerY) {
+            const color = '#ff4d6d';
+            for (let i = 0; i < 150; i++) {
+                const angle = (i / 150) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(angle), 3);
+                const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+                particles.push({
+                    x: centerX, y: centerY,
+                    vx: x * 0.4, vy: y * 0.4,
+                    alpha: 1, color: color
+                });
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                p.alpha -= 0.008;
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+                if (p.alpha <= 0) particles.splice(i, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // Loop kembang api hati otomatis di intro
+        const heartInterval = setInterval(() => {
+            createHeart(canvas.width / 2, canvas.height / 2);
+        }, 1500);
+
+        function startExperience() {
+            clearInterval(heartInterval);
+            document.getElementById('musikUltah').play();
+            createHeart(canvas.width / 2, canvas.height / 2); // Ledakan terakhir
+            
+            document.getElementById('intro-overlay').style.opacity = '0';
+            document.getElementById('hero-content').style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.display = 'none';
+            }, 1500);
+        }
+
+        window.addEventListener('scroll', () => {
+            const st = window.pageYOffset;
+            document.getElementById('gridAnim').style.transform = `rotate(-15deg) translateY(${400 - (st * 0.5)}px)`;
+        });
+
+        animate();
+    </script>
+</body>
+</html>
