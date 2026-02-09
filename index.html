@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 18th Birthday Diva!</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root { --bg: #0a0a0a; --text: #ffffff; --accent: #ff4d6d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; }
+
+        /* --- 1. INTRO OVERLAY --- */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10000; background: #000; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+        }
+        #canvas-fireworks { position: absolute; width: 100%; height: 100%; }
+        #tap-msg { position: relative; z-index: 10001; letter-spacing: 5px; font-size: 0.8rem; animation: blink 2s infinite; text-align: center; }
+        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
+
+        /* --- 2. HERO SECTION --- */
+        .hero {
+            height: 100vh; width: 100%; position: relative;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), 
+                        url('asset/fotoawal.png') no-repeat center center/cover;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 60px 30px;
+            opacity: 0; transition: opacity 1.5s ease;
+        }
+        .hero h1 { font-size: clamp(2.5rem, 10vw, 8rem); line-height: 0.8; text-transform: uppercase; opacity: 0; transform: translateY(30px); }
+        .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; opacity: 0; transform: translateY(30px); }
+        .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
+
+        /* --- 3. SLIDE 2 (GRID FOTO) --- */
+        .scroll-wrapper { 
+            position: relative; height: 100vh; width: 100vw; 
+            background: #000; overflow: hidden; 
+        }
+        .grid-container { 
+            display: flex; flex-direction: column; justify-content: center;
+            gap: 15px; width: 100%; height: 150%; 
+            position: absolute; top: -25%; left: 0; transform: rotate(-8deg); 
+        }
+        .row { display: flex; width: max-content; height: 35vh; gap: 15px; }
+        .row img { height: 100%; width: auto; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; opacity: 0.35; }
+        .row-left { animation: scrollLeft 45s linear infinite; }
+        .row-right { animation: scrollRight 45s linear infinite; }
+        @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes scrollRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+        .floating-text-slide2 { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center; z-index: 100; 
+            padding: 20px;
+        }
+        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; line-height: 1.2; }
+
+        /* --- 4. MESSAGE SECTION (SLIDE 3) --- */
+        .message-section {
+            min-height: 100vh; width: 100%; padding: 80px 8%;
+            display: flex;
+            flex-direction: column; /* Tetap vertikal di HP */
+            gap: 40px;
+            align-items: center; background: #000;
+        }
+
+        .text-content { opacity: 0; transform: translateY(30px); text-align: center; max-width: 600px; }
+        .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
+        .text-content p { font-size: 1.1rem; line-height: 1.8; color: #ddd; }
+        
+        .collage-content { 
+            display: flex;
+            flex-direction: column; /* Video berjejer ke bawah */
+            gap: 20px; 
+            width: 100%;
+            max-width: 500px;
+            opacity: 0; 
+            transform: translateY(30px); 
+        }
+        .collage-content video { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 16/9; /* UKURAN LANDSCAPE */
+            object-fit: cover; 
+            border-radius: 12px; 
+            background: #111; 
+            border: 1px solid #333;
+        }
+
+        /* --- RESPONSIVE UNTUK WEB --- */
+        @media (min-width: 992px) {
+            .message-section { flex-direction: row; justify-content: space-between; text-align: left; }
+            .text-content { text-align: left; transform: translateX(-50px); }
+            .collage-content { display: grid; grid-template-columns: 1fr 1fr; max-width: 800px; transform: translateX(50px); }
+        }
+
+        /* --- 5. CAKE SECTION --- */
+        .cake-section {
+            height: 100vh; width: 100%; background: #000; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        #canvas-cake { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .hbd-text { 
+            position: absolute; top: 15%; color: var(--accent); 
+            font-size: clamp(1.5rem, 6vw, 3.5rem); font-family: 'Playfair Display', serif;
+            opacity: 0; transform: scale(0.8); transition: 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center; width: 100%; z-index: 20; pointer-events: none;
+        }
+        .hbd-text.show { opacity: 1; transform: scale(1); }
+        .diva-name { display: block; font-size: 1.3em; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px var(--accent); margin-top: 10px; }
+
+        .instruction { color: var(--accent); letter-spacing: 2px; text-align: center; margin-bottom: 100px; z-index: 10; transition: 0.5s; font-size: 0.9rem; }
+        .cake { 
+            position: relative; width: 200px; height: 110px; 
+            background: #f4e1d2; border-radius: 10px 10px 0 0; 
+            display: flex; justify-content: space-evenly; align-items: flex-start; z-index: 10;
+        }
+        .candle { position: relative; width: 8px; height: 40px; background: #ff4d6d; top: -40px; border-radius: 4px; }
+        .flame {
+            position: absolute; width: 12px; height: 20px; background: orange; top: -20px; left: -2px;
+            border-radius: 50% 50% 20% 20%; box-shadow: 0 0 15px orange;
+            animation: flicker 0.1s infinite alternate; transition: 0.6s;
+        }
+        .flame.off { opacity: 0; transform: scale(0); pointer-events: none; }
+        @keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+        
+        .wish-final { margin-top: 50px; opacity: 0; text-align: center; transition: 1s; z-index: 10; }
+        .wish-final.show { opacity: 1; }
+
+        /* --- 6. VIDEO SECTION --- */
+        .video-section {
+            min-height: 100vh; width: 100%; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px;
+        }
+        .video-container {
+            width: 100%; max-width: 400px; aspect-ratio: 9/16;
+            background: #111; border-radius: 20px; overflow: hidden;
+            border: 2px solid var(--accent); box-shadow: 0 0 30px rgba(255, 77, 109, 0.2);
+        }
+        .video-container video { width: 100%; height: 100%; object-fit: cover; }
+        
+        .wa-btn {
+            margin-top: 40px; color: white; text-decoration: none; 
+            border: 1px solid var(--accent); padding: 15px 40px; 
+            border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px;
+        }
+
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay" onclick="startExperience()">
+        <canvas id="canvas-fireworks"></canvas>
+        <div id="tap-msg">PENCET LAYAR SAYANG</div>
+    </div>
+
+    <audio id="musikUltah" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="hero" id="hero-content">
+        <h1>HAPPY<br>BIRTHDAY</h1>
+        <div class="hero-footer">
+            <div>FEBRUARI 12, 2026</div>
+            <div class="age">18th</div>
+        </div>
+    </section>
+
+    <section class="scroll-wrapper">
+        <div class="grid-container">
+            <div class="row row-left">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png"><img src="asset/foto7.png"><img src="asset/foto8.png">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png"><img src="asset/foto7.png"><img src="asset/foto8.png">
+            </div>
+            <div class="row row-right">
+                <img src="asset/foto7.png"><img src="asset/foto8.png"><img src="asset/foto6.png"><img src="asset/foto5.png"><img src="asset/foto4.png"><img src="asset/foto3.png"><img src="asset/foto2.png"><img src="asset/foto1.png">
+                <img src="asset/foto7.png"><img src="asset/foto8.png"><img src="asset/foto6.png"><img src="asset/foto5.png"><img src="asset/foto4.png"><img src="asset/foto3.png"><img src="asset/foto2.png"><img src="asset/foto1.png">
+            </div>
+            <div class="row row-left">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png"><img src="asset/foto7.png"><img src="asset/foto8.png">
+                <img src="asset/foto1.png"><img src="asset/foto2.png"><img src="asset/foto3.png"><img src="asset/foto4.png"><img src="asset/foto5.png"><img src="asset/foto6.png"><img src="asset/foto7.png"><img src="asset/foto8.png">
+            </div>
+        </div>
+        <div class="floating-text-slide2">
+            <h2 class="anim-scroll">You're my brightest star<br>in the <span>Universe</span></h2>
+        </div>
+    </section>
+
+    <section class="message-section">
+        <div class="text-content">
+            <h2>Ciee Namabah 1 Tahun</h2>
+            <p>Happy birthday buat bocil diva kesayangan aku. Sekarang udah makin gede sama makin tua yee walaupun masih 18 tahun. tapi tetep aja di mataku kamu itu bocil yang paling gemesin tapi kandang ngeselin awokawkawok. Makasih ya udah sabar sama aku dan udah nemenin hari-hari aku jadi lebih warna-warni. Jangan pernah berhenti jadi Diva yang ceria ya, saam Jangan sedih mulu. Love you, Cill</p>
+        </div>
+        <div class="collage-content">
+            <video autoplay muted loop playsinline><source src="asset/video1.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="asset/video2.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="asset/video3.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="asset/video4.mp4" type="video/mp4"></video>
+        </div>
+    </section>
+
+    <section class="cake-section">
+        <canvas id="canvas-cake"></canvas>
+        <div class="hbd-text" id="hbd-surprise">
+            HAPPY BIRTHDAY SAYANG
+            <span class="diva-name">DIVA</span>
+        </div>
+        <div class="instruction" id="instruksi">TIUP LILINNYA SAYANG 🕯️<br><small>(Tiup mic HP atau tap layar sayang)</small></div>
+        <div class="cake" id="cake-area">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+        </div>
+        <div class="wish-final" id="wish">
+            <h2 style="color:var(--accent); font-size: 2rem;">WISH GRANTED </h2>
+            <p>Scroll ya Diva SAYANG</p>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <h2 style="margin-bottom: 25px; color: var(--accent); font-family: 'Playfair Display', serif;"> Di Tonton Ya Vidio dibaweah ini BOCILL</h2>
+        <div class="video-container">
+            <video controls playsinline><source src="asset/video1.mp4" type="video/mp4"></video>
+        </div>
+        <a href="https://wa.me/628123456789" class="wa-btn">CHAT AKU SEKARANG</a>
+    </section>
+
+    <footer>MADE WITH LOVE &bull; 2026</footer>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        function startExperience() {
+            document.getElementById('musikUltah').play();
+            document.getElementById('intro-overlay').style.opacity = '0';
+            setTimeout(() => { 
+                document.getElementById('intro-overlay').style.display = 'none'; 
+                document.getElementById('hero-content').style.opacity = '1';
+                gsap.to(".hero h1, .hero-footer", { opacity: 1, y: 0, duration: 1.2, stagger: 0.3 });
+                initMic(); 
+            }, 1000);
+
+            gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1 });
+            gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 80%" }, opacity: 1, y: 0, duration: 1 });
+            gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0, duration: 1 });
+        }
+
+        function initMic() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = ctxAudio.createAnalyser();
+                    const src = ctxAudio.createMediaStreamSource(stream);
+                    const proc = ctxAudio.createScriptProcessor(2048, 1, 1);
+                    analyser.fftSize = 256;
+                    src.connect(analyser); analyser.connect(proc); proc.connect(ctxAudio.destination);
+                    proc.onaudioprocess = () => {
+                        const data = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(data);
+                        let val = data.reduce((a, b) => a + b) / data.length;
+                        if (val > 50) matikanLilin(); 
+                    };
+                }).catch(() => { document.getElementById('cake-area').onclick = matikanLilin; });
+            } else {
+                document.getElementById('cake-area').onclick = matikanLilin;
+            }
+        }
+
+        let cakeSurpriseStarted = false;
+        function matikanLilin() {
+            const flames = document.querySelectorAll('.flame');
+            if (flames.length > 0 && flames[0].classList.contains('off')) return; 
+
+            flames.forEach(f => f.classList.add('off'));
+            document.getElementById('wish').classList.add('show');
+            document.getElementById('instruksi').style.opacity = "0";
+            document.getElementById('hbd-surprise').classList.add('show');
+            
+            cakeSurpriseStarted = true;
+            for(let i=0; i<15; i++) {
+                setTimeout(() => {
+                    createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7);
+                }, i * 200);
+            }
+        }
+
+        function createParticles(array, x, y, isHeart) {
+            const count = isHeart ? 35 : 25;
+            const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2;
+                let vx, vy;
+                if(isHeart) {
+                    const tx = 16 * Math.pow(Math.sin(angle), 3);
+                    const ty = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+                    vx = tx * 0.18; vy = ty * 0.18;
+                } else {
+                    const speed = Math.random() * 4 + 3;
+                    vx = Math.cos(angle) * speed; vy = Math.sin(angle) * speed;
+                }
+                array.push({ x, y, vx, vy, alpha: 1, color, s: Math.random() * 3 + 1 });
+            }
+        }
+
+        const cIntro = document.getElementById('canvas-fireworks');
+        const ctxI = cIntro.getContext('2d');
+        let particlesI = [];
+        cIntro.width = window.innerWidth; cIntro.height = window.innerHeight;
+
+        function animateIntro() {
+            ctxI.fillStyle = 'rgba(0,0,0,0.15)'; ctxI.fillRect(0,0,cIntro.width,cIntro.height);
+            particlesI.forEach((p,i) => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.alpha -= 0.015;
+                ctxI.globalAlpha = p.alpha; ctxI.fillStyle = p.color;
+                ctxI.beginPath(); ctxI.arc(p.x, p.y, p.s, 0, Math.PI*2); ctxI.fill();
+                if(p.alpha <= 0) particlesI.splice(i, 1);
+            });
+            requestAnimationFrame(animateIntro);
+        }
+        setInterval(() => {
+            if(document.getElementById('intro-overlay').style.display !== 'none')
+                createParticles(particlesI, Math.random() * cIntro.width, Math.random() * cIntro.height * 0.6, Math.random() > 0.5);
+        }, 600);
+        animateIntro();
+
+        const cCake = document.getElementById('canvas-cake');
+        const ctxC = cCake.getContext('2d');
+        let particlesC = [];
+        cCake.width = window.innerWidth; cCake.height = window.innerHeight;
+
+        function createCakeExplosion(x, y) {
+            createParticles(particlesC, x, y, Math.random() > 0.4);
+        }
+
+        function animateCake() {
+            ctxC.clearRect(0, 0, cCake.width, cCake.height);
+            particlesC.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.alpha -= 0.012;
+                ctxC.globalAlpha = p.alpha; ctxC.fillStyle = p.color;
+                ctxC.beginPath(); ctxC.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctxC.fill();
+                if (p.alpha <= 0) particlesC.splice(i, 1);
+            });
+            if(cakeSurpriseStarted && Math.random() < 0.06) {
+                createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.6);
+            }
+            requestAnimationFrame(animateCake);
+        }
+        animateCake();
+
+        window.addEventListener('resize', () => {
+            cIntro.width = cCake.width = window.innerWidth;
+            cIntro.height = cCake.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
+
