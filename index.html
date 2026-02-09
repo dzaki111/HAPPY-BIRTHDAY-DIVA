@@ -60,18 +60,36 @@
         }
         .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; }
 
-        /* --- 4. MESSAGE SECTION --- */
+        /* --- 4. MESSAGE SECTION (SLIDE 3) --- */
         .message-section {
             min-height: 100vh; width: 100%; padding: 80px 8%;
-            display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
+            display: grid; 
+            grid-template-columns: 1fr; /* Default Mobile: Satu kolom (tumpuk) */
+            gap: 40px;
             align-items: center; background: #000;
         }
+
+        /* Desktop View (Lebar Layar > 992px) */
+        @media (min-width: 992px) {
+            .message-section {
+                grid-template-columns: 1.2fr 1fr; /* Berdampingan di Web */
+            }
+        }
+
         .text-content { opacity: 0; transform: translateX(-50px); }
         .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
-        .collage-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; opacity: 0; transform: translateX(50px); }
-        .collage-content video { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background: #111; }
+        .text-content p { font-size: 1.1rem; line-height: 1.6; color: #ddd; }
+        
+        .collage-content { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            opacity: 0; 
+            transform: translateX(50px); 
+        }
+        .collage-content video { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; background: #111; }
 
-        /* --- 5. CAKE SECTION (FIXED LAYOUT) --- */
+        /* --- 5. CAKE SECTION --- */
         .cake-section {
             height: 100vh; width: 100%; background: #000; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -241,7 +259,7 @@
         let cakeSurpriseStarted = false;
         function matikanLilin() {
             const flames = document.querySelectorAll('.flame');
-            if (flames[0].classList.contains('off')) return; 
+            if (flames.length > 0 && flames[0].classList.contains('off')) return; 
 
             flames.forEach(f => f.classList.add('off'));
             document.getElementById('wish').classList.add('show');
@@ -249,7 +267,6 @@
             document.getElementById('hbd-surprise').classList.add('show');
             
             cakeSurpriseStarted = true;
-            // Ledakan kembang api & love beruntun
             for(let i=0; i<12; i++) {
                 setTimeout(() => {
                     createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7);
@@ -257,7 +274,7 @@
             }
         }
 
-        // --- LOGIKA KEMBANG API & LOVE (SAMA UNTUK INTRO & CAKE) ---
+        // --- LOGIKA KEMBANG API & LOVE ---
         function createParticles(array, x, y, isHeart) {
             const count = isHeart ? 35 : 25;
             const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
@@ -316,7 +333,6 @@
                 ctxC.beginPath(); ctxC.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctxC.fill();
                 if (p.alpha <= 0) particlesC.splice(i, 1);
             });
-            // Loop kembang api setelah ditiup
             if(cakeSurpriseStarted && Math.random() < 0.06) {
                 createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.6);
             }
