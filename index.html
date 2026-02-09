@@ -30,14 +30,14 @@
             height: 100vh; width: 100%; position: relative;
             background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), 
                         url('asset/foto1.png') no-repeat center center/cover;
-            display: flex; flex-direction: column; justify-content: space-between; padding: 60px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 60px 30px;
             opacity: 0; transition: opacity 1.5s ease;
         }
         .hero h1 { font-size: clamp(2.5rem, 10vw, 8rem); line-height: 0.8; text-transform: uppercase; opacity: 0; transform: translateY(30px); }
         .hero-footer { display: flex; justify-content: space-between; align-items: flex-end; opacity: 0; transform: translateY(30px); }
         .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
 
-        /* --- 3. SLIDE 2 --- */
+        /* --- 3. SLIDE 2 (GRID FOTO) --- */
         .scroll-wrapper { 
             position: relative; height: 100vh; width: 100vw; 
             background: #000; overflow: hidden; 
@@ -57,37 +57,48 @@
         .floating-text-slide2 { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; justify-content: center; align-items: center; z-index: 100; 
+            padding: 20px;
         }
-        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; }
+        .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; line-height: 1.2; }
 
         /* --- 4. MESSAGE SECTION (SLIDE 3) --- */
         .message-section {
             min-height: 100vh; width: 100%; padding: 80px 8%;
-            display: grid; 
-            grid-template-columns: 1fr; /* Default Mobile: Satu kolom (tumpuk) */
+            display: flex;
+            flex-direction: column; /* Tetap vertikal di HP */
             gap: 40px;
             align-items: center; background: #000;
         }
 
-        /* Desktop View (Lebar Layar > 992px) */
-        @media (min-width: 992px) {
-            .message-section {
-                grid-template-columns: 1.2fr 1fr; /* Berdampingan di Web */
-            }
-        }
-
-        .text-content { opacity: 0; transform: translateX(-50px); }
-        .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
-        .text-content p { font-size: 1.1rem; line-height: 1.6; color: #ddd; }
+        .text-content { opacity: 0; transform: translateY(30px); text-align: center; max-width: 600px; }
+        .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
+        .text-content p { font-size: 1.1rem; line-height: 1.8; color: #ddd; }
         
         .collage-content { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
+            display: flex;
+            flex-direction: column; /* Video berjejer ke bawah */
+            gap: 20px; 
+            width: 100%;
+            max-width: 500px;
             opacity: 0; 
-            transform: translateX(50px); 
+            transform: translateY(30px); 
         }
-        .collage-content video { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; background: #111; }
+        .collage-content video { 
+            width: 100%; 
+            height: auto; 
+            aspect-ratio: 16/9; /* UKURAN LANDSCAPE */
+            object-fit: cover; 
+            border-radius: 12px; 
+            background: #111; 
+            border: 1px solid #333;
+        }
+
+        /* --- RESPONSIVE UNTUK WEB --- */
+        @media (min-width: 992px) {
+            .message-section { flex-direction: row; justify-content: space-between; text-align: left; }
+            .text-content { text-align: left; transform: translateX(-50px); }
+            .collage-content { display: grid; grid-template-columns: 1fr 1fr; max-width: 800px; transform: translateX(50px); }
+        }
 
         /* --- 5. CAKE SECTION --- */
         .cake-section {
@@ -103,38 +114,45 @@
             text-align: center; width: 100%; z-index: 20; pointer-events: none;
         }
         .hbd-text.show { opacity: 1; transform: scale(1); }
-        .diva-name { display: block; font-size: 1.3em; letter-spacing: 8px; color: #fff; text-shadow: 0 0 20px var(--accent); }
+        .diva-name { display: block; font-size: 1.3em; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px var(--accent); margin-top: 10px; }
 
-        .instruction { color: var(--accent); letter-spacing: 2px; text-align: center; margin-bottom: 150px; z-index: 10; transition: 0.5s; }
+        .instruction { color: var(--accent); letter-spacing: 2px; text-align: center; margin-bottom: 100px; z-index: 10; transition: 0.5s; font-size: 0.9rem; }
         .cake { 
-            position: relative; width: 220px; height: 130px; 
+            position: relative; width: 200px; height: 110px; 
             background: #f4e1d2; border-radius: 10px 10px 0 0; 
             display: flex; justify-content: space-evenly; align-items: flex-start; z-index: 10;
         }
-        .candle { position: relative; width: 10px; height: 45px; background: #ff4d6d; top: -45px; border-radius: 4px; }
+        .candle { position: relative; width: 8px; height: 40px; background: #ff4d6d; top: -40px; border-radius: 4px; }
         .flame {
-            position: absolute; width: 14px; height: 22px; background: orange; top: -22px; left: -2px;
+            position: absolute; width: 12px; height: 20px; background: orange; top: -20px; left: -2px;
             border-radius: 50% 50% 20% 20%; box-shadow: 0 0 15px orange;
             animation: flicker 0.1s infinite alternate; transition: 0.6s;
         }
         .flame.off { opacity: 0; transform: scale(0); pointer-events: none; }
         @keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
         
-        .wish-final { margin-top: 60px; opacity: 0; text-align: center; transition: 1s; z-index: 10; }
+        .wish-final { margin-top: 50px; opacity: 0; text-align: center; transition: 1s; z-index: 10; }
         .wish-final.show { opacity: 1; }
 
         /* --- 6. VIDEO SECTION --- */
         .video-section {
             min-height: 100vh; width: 100%; background: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px;
         }
         .video-container {
-            width: 100%; max-width: 450px; aspect-ratio: 9/16;
+            width: 100%; max-width: 400px; aspect-ratio: 9/16;
             background: #111; border-radius: 20px; overflow: hidden;
             border: 2px solid var(--accent); box-shadow: 0 0 30px rgba(255, 77, 109, 0.2);
         }
         .video-container video { width: 100%; height: 100%; object-fit: cover; }
-        footer { padding: 40px; text-align: center; color: #333; font-size: 0.7rem; }
+        
+        .wa-btn {
+            margin-top: 40px; color: white; text-decoration: none; 
+            border: 1px solid var(--accent); padding: 15px 40px; 
+            border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px;
+        }
+
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; }
     </style>
 </head>
 <body>
@@ -193,9 +211,9 @@
         <canvas id="canvas-cake"></canvas>
         <div class="hbd-text" id="hbd-surprise">
             HAPPY BIRTHDAY SAYANG
-            <span class="diva-name">DIVA ✨</span>
+            <span class="diva-name">DIVA</span>
         </div>
-        <div class="instruction" id="instruksi">TIUP LILINNYA! 🕯️<br><small>(Tiup mic HP atau tap apinya)</small></div>
+        <div class="instruction" id="instruksi">TIUP LILINNYA SAYANG 🕯️<br><small>(Tiup mic HP atau tap layar sayang)</small></div>
         <div class="cake" id="cake-area">
             <div class="candle"><div class="flame"></div></div>
             <div class="candle"><div class="flame"></div></div>
@@ -203,17 +221,17 @@
             <div class="candle"><div class="flame"></div></div>
         </div>
         <div class="wish-final" id="wish">
-            <h2 style="color:var(--accent); font-size: 2.5rem;">WISH GRANTED! 🎉</h2>
-            <p>Scroll terus...</p>
+            <h2 style="color:var(--accent); font-size: 2rem;">WISH GRANTED! </h2>
+            <p>Scroll ya Diva SAYANG</p>
         </div>
     </section>
 
     <section class="video-section">
-        <h2 style="margin-bottom: 25px; color: var(--accent);">FOR YOU ❤️</h2>
+        <h2 style="margin-bottom: 25px; color: var(--accent); font-family: 'Playfair Display', serif;">FOR YOU ❤️</h2>
         <div class="video-container">
             <video controls playsinline><source src="asset/video1.mp4" type="video/mp4"></video>
         </div>
-        <a href="https://wa.me/628123456789" style="margin-top:40px; color:white; text-decoration:none; border: 1px solid #444; padding: 12px 30px; border-radius: 50px; font-size: 0.8rem;">CHAT AKU SEKARANG</a>
+        <a href="https://wa.me/628123456789" class="wa-btn">CHAT AKU SEKARANG</a>
     </section>
 
     <footer>MADE WITH LOVE &bull; 2026</footer>
@@ -221,7 +239,6 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- GLOBAL ALUR ---
         function startExperience() {
             document.getElementById('musikUltah').play();
             document.getElementById('intro-overlay').style.opacity = '0';
@@ -233,27 +250,29 @@
             }, 1000);
 
             gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1 });
-            gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 60%" }, opacity: 1, x: 0, duration: 1 });
-            gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 60%" }, opacity: 1, x: 0, duration: 1 });
+            gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 80%" }, opacity: 1, y: 0, duration: 1 });
+            gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0, duration: 1 });
         }
 
-        // --- SISTEM TIUP LILIN ---
         function initMic() {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-                const analyser = ctxAudio.createAnalyser();
-                const src = ctxAudio.createMediaStreamSource(stream);
-                const proc = ctxAudio.createScriptProcessor(2048, 1, 1);
-                analyser.fftSize = 256;
-                src.connect(analyser); analyser.connect(proc); proc.connect(ctxAudio.destination);
-                proc.onaudioprocess = () => {
-                    const data = new Uint8Array(analyser.frequencyBinCount);
-                    analyser.getByteFrequencyData(data);
-                    let val = data.reduce((a, b) => a + b) / data.length;
-                    if (val > 45) matikanLilin(); 
-                };
-            }).catch(() => { document.getElementById('cake-area').onclick = matikanLilin; });
-            document.getElementById('cake-area').onclick = matikanLilin;
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = ctxAudio.createAnalyser();
+                    const src = ctxAudio.createMediaStreamSource(stream);
+                    const proc = ctxAudio.createScriptProcessor(2048, 1, 1);
+                    analyser.fftSize = 256;
+                    src.connect(analyser); analyser.connect(proc); proc.connect(ctxAudio.destination);
+                    proc.onaudioprocess = () => {
+                        const data = new Uint8Array(analyser.frequencyBinCount);
+                        analyser.getByteFrequencyData(data);
+                        let val = data.reduce((a, b) => a + b) / data.length;
+                        if (val > 50) matikanLilin(); 
+                    };
+                }).catch(() => { document.getElementById('cake-area').onclick = matikanLilin; });
+            } else {
+                document.getElementById('cake-area').onclick = matikanLilin;
+            }
         }
 
         let cakeSurpriseStarted = false;
@@ -267,14 +286,13 @@
             document.getElementById('hbd-surprise').classList.add('show');
             
             cakeSurpriseStarted = true;
-            for(let i=0; i<12; i++) {
+            for(let i=0; i<15; i++) {
                 setTimeout(() => {
                     createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7);
-                }, i * 250);
+                }, i * 200);
             }
         }
 
-        // --- LOGIKA KEMBANG API & LOVE ---
         function createParticles(array, x, y, isHeart) {
             const count = isHeart ? 35 : 25;
             const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
@@ -293,7 +311,6 @@
             }
         }
 
-        // --- CANVAS 1: INTRO ---
         const cIntro = document.getElementById('canvas-fireworks');
         const ctxI = cIntro.getContext('2d');
         let particlesI = [];
@@ -315,7 +332,6 @@
         }, 600);
         animateIntro();
 
-        // --- CANVAS 2: CAKE SECTION ---
         const cCake = document.getElementById('canvas-cake');
         const ctxC = cCake.getContext('2d');
         let particlesC = [];
