@@ -14,7 +14,7 @@
     <style>
         :root { --bg: #0a0a0a; --text: #ffffff; --accent: #ff4d6d; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Prata', serif; overflow-x: hidden; touch-action: pan-y; }
 
         /* --- 1. INTRO OVERLAY --- */
         #intro-overlay {
@@ -27,12 +27,6 @@
         @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
 
         #player { display: none; }
-        #musicButton {
-            position: fixed; top: 20px; right: 20px; padding: 12px 20px;
-            background-color: #ffffff10; color: white; border: 1px solid white;
-            border-radius: 8px; cursor: pointer; z-index: 9999;
-            font-weight: bold; backdrop-filter: blur(5px); display: none;
-        }
 
         /* --- 2. HERO SECTION --- */
         .hero {
@@ -47,15 +41,8 @@
         .age { font-size: clamp(4rem, 15vw, 12rem); font-family: 'Playfair Display', serif; font-style: italic; line-height: 0.7; }
 
         /* --- 3. SLIDE 2 (GRID FOTO) --- */
-        .scroll-wrapper { 
-            position: relative; height: 100vh; width: 100vw; 
-            background: #000; overflow: hidden; 
-        }
-        .grid-container { 
-            display: flex; flex-direction: column; justify-content: center;
-            gap: 15px; width: 100%; height: 150%; 
-            position: absolute; top: -25%; left: 0; transform: rotate(-8deg); 
-        }
+        .scroll-wrapper { position: relative; height: 100vh; width: 100vw; background: #000; overflow: hidden; }
+        .grid-container { display: flex; flex-direction: column; justify-content: center; gap: 15px; width: 100%; height: 150%; position: absolute; top: -25%; left: 0; transform: rotate(-8deg); }
         .row { display: flex; width: max-content; height: 35vh; gap: 15px; }
         .row img { height: 100%; width: auto; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; opacity: 0.35; }
         .row-left { animation: scrollLeft 45s linear infinite; }
@@ -63,111 +50,58 @@
         @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @keyframes scrollRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 
-        .floating-text-slide2 { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center; z-index: 100; 
-            padding: 20px;
-        }
+        .floating-text-slide2 { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
         .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; line-height: 1.2; }
 
         /* --- 4. MESSAGE SECTION --- */
-        .message-section {
-            min-height: 100vh; width: 100%; padding: 80px 8%;
-            display: flex; flex-direction: column; gap: 40px;
-            align-items: center; background: #000;
-        }
+        .message-section { min-height: 100vh; width: 100%; padding: 80px 8%; display: flex; flex-direction: column; gap: 40px; align-items: center; background: #000; }
         .text-content { opacity: 0; transform: translateY(30px); text-align: center; max-width: 600px; }
         .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
         .text-content p { font-size: 1.1rem; line-height: 1.8; color: #ddd; }
-        
-        .collage-content { 
-            display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px;
-            opacity: 0; transform: translateY(30px); 
-        }
-        .collage-content video { 
-            width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; 
-            border-radius: 12px; background: #111; border: 1px solid #333;
-        }
+        .collage-content { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; opacity: 0; transform: translateY(30px); }
+        .collage-content video { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; background: #111; border: 1px solid #333; }
 
         @media (min-width: 992px) {
             .message-section { flex-direction: row; justify-content: space-between; text-align: left; }
-            .text-content { text-align: left; transform: translateX(-50px); }
-            .collage-content { display: grid; grid-template-columns: 1fr 1fr; max-width: 800px; transform: translateX(50px); }
+            .collage-content { display: grid; grid-template-columns: 1fr 1fr; max-width: 800px; }
         }
 
         /* --- 5. CAKE SECTION --- */
-        .cake-section {
-            height: 100vh; width: 100%; background: #000; position: relative;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow: hidden;
-        }
+        .cake-section { height: 100vh; width: 100%; background: #000; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         #canvas-cake { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .hbd-text { 
-            position: absolute; top: 15%; color: var(--accent); 
-            font-size: clamp(1.5rem, 6vw, 3.5rem); font-family: 'Playfair Display', serif;
-            opacity: 0; transform: scale(0.8); transition: 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center; width: 100%; z-index: 20; pointer-events: none;
-        }
+        .hbd-text { position: absolute; top: 15%; color: var(--accent); font-size: clamp(1.5rem, 6vw, 3.5rem); font-family: 'Playfair Display', serif; opacity: 0; transform: scale(0.8); transition: 1.2s; text-align: center; width: 100%; z-index: 20; }
         .hbd-text.show { opacity: 1; transform: scale(1); }
-        .diva-name { display: block; font-size: 1.3em; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px var(--accent); margin-top: 10px; }
-
-        .instruction { color: var(--accent); letter-spacing: 2px; text-align: center; margin-bottom: 100px; z-index: 10; transition: 0.5s; font-size: 0.9rem; }
-        .cake { 
-            position: relative; width: 200px; height: 110px; 
-            background: #f4e1d2; border-radius: 10px 10px 0 0; 
-            display: flex; justify-content: space-evenly; align-items: flex-start; z-index: 10;
-        }
+        .instruction { color: var(--accent); letter-spacing: 2px; text-align: center; margin-bottom: 100px; z-index: 10; font-size: 0.9rem; }
+        .cake { position: relative; width: 200px; height: 110px; background: #f4e1d2; border-radius: 10px 10px 0 0; display: flex; justify-content: space-evenly; align-items: flex-start; z-index: 10; }
         .candle { position: relative; width: 8px; height: 40px; background: #ff4d6d; top: -40px; border-radius: 4px; }
-        .flame {
-            position: absolute; width: 12px; height: 20px; background: orange; top: -20px; left: -2px;
-            border-radius: 50% 50% 20% 20%; box-shadow: 0 0 15px orange;
-            animation: flicker 0.1s infinite alternate; transition: 0.6s;
-        }
-        .flame.off { opacity: 0; transform: scale(0); pointer-events: none; }
-        @keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-        
+        .flame { position: absolute; width: 12px; height: 20px; background: orange; top: -20px; left: -2px; border-radius: 50% 50% 20% 20%; box-shadow: 0 0 15px orange; animation: flicker 0.1s infinite alternate; }
+        .flame.off { opacity: 0; transform: scale(0); }
+        @keyframes flicker { from { transform: scale(1); } to { transform: scale(1.1); } }
         .wish-final { margin-top: 50px; opacity: 0; text-align: center; transition: 1s; z-index: 10; }
         .wish-final.show { opacity: 1; }
 
         /* --- 6. PLANET SECTION --- */
-        .planet-section {
-            height: 100vh; width: 100%;
-            background: radial-gradient(circle at center, #000010 0%, #000000 100%);
-            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: grab; overflow: hidden; touch-action: none;
-        }
+        .planet-section { height: 100vh; width: 100%; background: radial-gradient(circle at center, #000010 0%, #000000 100%); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
         #planet-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 11; }
         
-        #dark-overlay {
-            position: fixed; z-index: 5; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 10, 30, 0.92); pointer-events: none;
-            transition: opacity 1.2s; opacity: 1; display: none;
+        /* Tombol Lanjut Scroll */
+        .btn-next-scroll {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 100; padding: 12px 25px; background: rgba(255, 77, 109, 0.2);
+            color: white; border: 1px solid var(--accent); border-radius: 30px;
+            font-size: 0.8rem; letter-spacing: 1px; backdrop-filter: blur(5px);
+            cursor: pointer; animation: bounce 2s infinite;
         }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
         /* --- 7. VIDEO SECTION --- */
-        .video-section {
-            min-height: 100vh; width: 100%; background: #000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px;
-        }
-        .video-container {
-            width: 100%; max-width: 400px; aspect-ratio: 9/16;
-            background: #111; border-radius: 20px; overflow: hidden;
-            border: 2px solid var(--accent); box-shadow: 0 0 30px rgba(255, 77, 109, 0.2);
-        }
-        .video-container video { width: 100%; height: 100%; object-fit: cover; }
-        
-        .wa-btn {
-            margin-top: 40px; color: white; text-decoration: none; 
-            border: 1px solid var(--accent); padding: 15px 40px; 
-            border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px;
-        }
-
+        .video-section { min-height: 100vh; width: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; }
+        .video-container { width: 100%; max-width: 400px; aspect-ratio: 9/16; background: #111; border-radius: 20px; overflow: hidden; border: 2px solid var(--accent); }
+        .wa-btn { margin-top: 40px; color: white; text-decoration: none; border: 1px solid var(--accent); padding: 15px 40px; border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px; }
         footer { padding: 40px; text-align: center; color: #444; font-size: 0.7rem; }
     </style>
 </head>
 <body>
-
-    <div id="dark-overlay"></div>
 
     <div id="intro-overlay" onclick="startExperience()">
         <canvas id="canvas-fireworks"></canvas>
@@ -175,7 +109,6 @@
     </div>
 
     <div id="player"></div>
-    <button id="musicButton">Mainkan Musik 🎵</button>
 
     <section class="hero" id="hero-content">
         <h1>HAPPY<br>BIRTHDAY</h1>
@@ -220,301 +153,181 @@
 
     <section class="cake-section">
         <canvas id="canvas-cake"></canvas>
-        <div class="hbd-text" id="hbd-surprise">
-            HAPPY BIRTHDAY SAYANG
-            <span class="diva-name">DIVA</span>
-        </div>
-        <div class="instruction" id="instruksi">TIUP LILINNYA SAYANG 🕯️<br><small>(Tiup mic HP atau tap layar sayang)</small></div>
+        <div class="hbd-text" id="hbd-surprise">HAPPY BIRTHDAY SAYANG <span style="display:block; font-size:1.3em; color:#fff;">DIVA</span></div>
+        <div class="instruction" id="instruksi">TIUP LILINNYA SAYANG 🕯️</div>
         <div class="cake" id="cake-area">
             <div class="candle"><div class="flame"></div></div>
             <div class="candle"><div class="flame"></div></div>
             <div class="candle"><div class="flame"></div></div>
             <div class="candle"><div class="flame"></div></div>
         </div>
-        <div class="wish-final" id="wish">
-            <h2 style="color:var(--accent); font-size: 2rem;">WISH GRANTED </h2>
-            <p>Scroll ya Diva SAYANG</p>
-        </div>
+        <div class="wish-final" id="wish"><h2 style="color:var(--accent);">WISH GRANTED</h2><p>Scroll ya Diva SAYANG</p></div>
     </section>
 
     <section class="planet-section" id="planet-gui">
         <div id="planet-canvas-container"></div>
+        <button class="btn-next-scroll" onclick="scrollToVideo()">LANJUT SCROLL ↓</button>
     </section>
 
-    <section class="video-section">
-        <h2 style="margin-bottom: 25px; color: var(--accent); font-family: 'Playfair Display', serif;"> Di Tonton Ya Vidio dibaweah ini BOCILL</h2>
-        <div class="video-container">
-            <video controls playsinline><source src="asset/video1.mp4" type="video/mp4"></video>
-        </div>
+    <section class="video-section" id="final-video">
+        <h2 style="margin-bottom:25px; color:var(--accent);">Di Tonton Ya Vidio BOCILL</h2>
+        <div class="video-container"><video controls playsinline><source src="asset/video1.mp4" type="video/mp4"></video></div>
         <a href="https://wa.me/628123456789" class="wa-btn">CHAT AKU SEKARANG</a>
     </section>
 
     <footer>MADE WITH LOVE &bull; 2026 BY MIKO</footer>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
         gsap.registerPlugin(ScrollTrigger);
+        let player, cakeSurpriseStarted = false;
 
-        let player;
-        const startTime = 227;
-        const endTime = 261;
-
-        window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('player', {
-                height: '0', width: '0',
-                videoId: 'd4OMqGKBl6E',
-                playerVars: { autoplay: 0, start: startTime, end: endTime, controls: 0, loop: 1, playlist: 'd4OMqGKBl6E' },
-                events: {
-                    onStateChange: (event) => {
-                        if (event.data === YT.PlayerState.ENDED) {
-                            player.seekTo(startTime);
-                            player.playVideo();
-                        }
-                    }
-                }
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', { height: '0', width: '0', videoId: 'd4OMqGKBl6E', 
+                playerVars: { autoplay: 0, start: 227, end: 261, loop: 1, playlist: 'd4OMqGKBl6E' } 
             });
-        };
+        }
+
+        function scrollToVideo() {
+            document.getElementById('final-video').scrollIntoView({ behavior: 'smooth' });
+        }
 
         function startExperience() {
             if (player && player.playVideo) player.playVideo();
-            document.body.classList.add('intro-started');
-            document.getElementById('intro-overlay').style.opacity = '0';
-            setTimeout(() => { 
-                document.getElementById('intro-overlay').style.display = 'none'; 
-                document.getElementById('hero-content').style.opacity = '1';
-                gsap.to(".hero h1, .hero-footer", { opacity: 1, y: 0, duration: 1.2, stagger: 0.3 });
-                initMic(); 
-                init3DPlanet(); 
-            }, 1000);
-
-            gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1 });
-            gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 80%" }, opacity: 1, y: 0, duration: 1 });
-            gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0, duration: 1 });
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('hero-content').style.opacity = '1';
+            gsap.to(".hero h1, .hero-footer", { opacity: 1, y: 0, duration: 1, stagger: 0.3 });
+            init3DPlanet();
+            initMic();
+            
+            gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0 });
+            gsap.to(".text-content, .collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0 });
         }
 
-        function initMic() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-                    const analyser = ctxAudio.createAnalyser();
-                    const src = ctxAudio.createMediaStreamSource(stream);
-                    const proc = ctxAudio.createScriptProcessor(2048, 1, 1);
-                    analyser.fftSize = 256;
-                    src.connect(analyser); analyser.connect(proc); proc.connect(ctxAudio.destination);
-                    proc.onaudioprocess = () => {
-                        const data = new Uint8Array(analyser.frequencyBinCount);
-                        analyser.getByteFrequencyData(data);
-                        let val = data.reduce((a, b) => a + b) / data.length;
-                        if (val > 50) matikanLilin(); 
-                    };
-                }).catch(() => { document.getElementById('cake-area').onclick = matikanLilin; });
-            } else { document.getElementById('cake-area').onclick = matikanLilin; }
-        }
-
-        let cakeSurpriseStarted = false;
-        function matikanLilin() {
-            const flames = document.querySelectorAll('.flame');
-            if (flames.length > 0 && flames[0].classList.contains('off')) return; 
-            flames.forEach(f => f.classList.add('off'));
-            document.getElementById('wish').classList.add('show');
-            document.getElementById('instruksi').style.opacity = "0";
-            document.getElementById('hbd-surprise').classList.add('show');
-            cakeSurpriseStarted = true;
-            for(let i=0; i<15; i++) {
-                setTimeout(() => { createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7); }, i * 200);
-            }
-        }
-
-        // --- 3D PLANET LOGIC ---
         function init3DPlanet() {
             const container = document.getElementById('planet-canvas-container');
             const scene = new THREE.Scene();
-            
             const isMobile = window.innerWidth < 768;
-            const camera = new THREE.PerspectiveCamera(isMobile ? 85 : 75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-            
+            const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Kurangi pixel ratio biar lancar
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             container.appendChild(renderer.domElement);
 
-            const mainGroup = new THREE.Group(); 
-            scene.add(mainGroup);
-
+            const mainGroup = new THREE.Group(); scene.add(mainGroup);
             const textureLoader = new THREE.TextureLoader();
 
-            // 1. PLANET
-            const planetRadius = isMobile ? 1.8 : 2.2;
-            const planetGeo = new THREE.SphereGeometry(planetRadius, 32, 32); // Segmen dikurangi biar enteng
-            const planetTex = textureLoader.load('asset/fotoawal.png');
-            const planetMat = new THREE.MeshBasicMaterial({ map: planetTex }); // Ganti shader ke basic biar super enteng
+            // Planet
+            const planetGeo = new THREE.SphereGeometry(isMobile ? 1.8 : 2.2, 32, 32);
+            const planetMat = new THREE.MeshBasicMaterial({ map: textureLoader.load('asset/fotoawal.png') });
             const planet = new THREE.Mesh(planetGeo, planetMat);
             mainGroup.add(planet);
 
-            // 2. TEXT LAYER (Cukup 3 Kalimat Saja)
+            // Ring Texts (3 Sentences)
+            const ringTexts = ['HAPPY BIRTHDAY DIVA SAYANG ', 'YOU ARE MY ENTIRE UNIVERSE ', 'LOVE YOU TO THE MOON AND BACK '];
             const textGroup = new THREE.Group();
-            const ringTexts = [
-                'HAPPY BIRTHDAY DIVA SAYANG ', 
-                'YOU ARE MY ENTIRE UNIVERSE ', 
-                'LOVE YOU TO THE MOON AND BACK '
-            ];
-            
             ringTexts.forEach((text, i) => {
-                const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 64; // Resolusi canvas dikurangi
+                const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 64;
                 const ctx = canvas.getContext('2d');
-                ctx.font = 'bold 35px Orbitron'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+                ctx.font = 'bold 38px Orbitron'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
                 ctx.fillText(text.repeat(2), 512, 45);
                 const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping;
-                
-                const txtRing = new THREE.Mesh(
-                    new THREE.CylinderGeometry(planetRadius + 1.2 + i*0.8, planetRadius + 1.2 + i*0.8, 0.3, 32, 1, true),
-                    new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
-                );
-                
-                txtRing.rotation.x = Math.random() * Math.PI; 
-                txtRing.rotation.z = Math.random() * Math.PI;
+                const txtRing = new THREE.Mesh(new THREE.CylinderGeometry(planet.geometry.parameters.radius + 1.2 + i*0.8, planet.geometry.parameters.radius + 1.2 + i*0.8, 0.3, 32, 1, true), new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }));
+                txtRing.rotation.x = Math.random() * Math.PI; txtRing.rotation.z = Math.random() * Math.PI;
                 textGroup.add(txtRing);
             });
             mainGroup.add(textGroup);
 
-            // 3. PHOTO LAYER (DIKURANGI JADI 40 BIAR ENTENG DI GITHUB)
+            // Photos (40 total)
             const photoGroup = new THREE.Group();
-            const fotoAssets = ['asset/foto1.png','asset/foto2.png','asset/foto3.png','asset/foto4.png','asset/foto5.png','asset/foto6.png','asset/foto7.png','asset/foto8.png'];
-            for(let i=0; i<40; i++) {
+            const assets = ['asset/foto1.png','asset/foto2.png','asset/foto3.png','asset/foto4.png','asset/foto5.png','asset/foto6.png','asset/foto7.png','asset/foto8.png'];
+            for(let i=0; i<40; i++){
                 const angle = Math.random() * Math.PI * 2;
                 const phi = Math.acos(2 * Math.random() - 1);
-                const radius = (isMobile ? 6 : 8) + Math.random() * 3;
-                const p = new THREE.Mesh(
-                    new THREE.PlaneGeometry(0.7, 0.9),
-                    new THREE.MeshBasicMaterial({ map: textureLoader.load(fotoAssets[i % fotoAssets.length]), side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
-                );
-                p.position.set(radius * Math.sin(phi) * Math.cos(angle), radius * Math.sin(phi) * Math.sin(angle), radius * Math.cos(phi));
-                p.lookAt(0, 0, 0);
-                photoGroup.add(p);
+                const r = (isMobile ? 6 : 8) + Math.random() * 3;
+                const p = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.9), new THREE.MeshBasicMaterial({ map: textureLoader.load(assets[i%8]), side: THREE.DoubleSide, transparent: true, opacity: 0.9 }));
+                p.position.set(r*Math.sin(phi)*Math.cos(angle), r*Math.sin(phi)*Math.sin(angle), r*Math.cos(phi));
+                p.lookAt(0,0,0); photoGroup.add(p);
             }
             mainGroup.add(photoGroup);
 
-            // 4. STARFIELD (DIKURANGI JADI 2000)
-            const starGeo = new THREE.BufferGeometry();
-            const starCount = 2000;
-            const posArray = new Float32Array(starCount * 3);
-            for(let i=0; i<starCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 200;
-            starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xffffff }));
-            mainGroup.add(stars);
-
-            camera.position.z = isMobile ? 20 : 16;
+            camera.position.z = isMobile ? 22 : 16;
             let targetZoom = camera.position.z;
-            let isDragging = false;
-            let prevMouse = { x: 0, y: 0 };
+            let isDragging = false, prevX = 0, prevY = 0, initialDist = 0;
 
-            // --- INPUT CONTROL ---
+            // --- MOBILE CONTROLS (TOUCH & PINCH) ---
             container.addEventListener('touchstart', (e) => {
-                isDragging = true;
-                prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
-            });
+                if(e.touches.length === 2) {
+                    initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                } else {
+                    isDragging = true; prevX = e.touches[0].pageX; prevY = e.touches[0].pageY;
+                }
+            }, {passive: false});
 
             container.addEventListener('touchmove', (e) => {
-                if(isDragging) {
-                    const deltaX = (e.touches[0].pageX - prevMouse.x) * 0.007;
-                    const deltaY = (e.touches[0].pageY - prevMouse.y) * 0.007;
-                    mainGroup.rotation.y += deltaX;
-                    mainGroup.rotation.x += deltaY;
-                    prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                if(e.touches.length === 2) {
+                    const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                    const zoomChange = (initialDist - dist) * 0.05;
+                    targetZoom = Math.max(8, Math.min(60, targetZoom + zoomChange));
+                    initialDist = dist;
+                } else if(isDragging) {
+                    mainGroup.rotation.y += (e.touches[0].pageX - prevX) * 0.007;
+                    mainGroup.rotation.x += (e.touches[0].pageY - prevY) * 0.007;
+                    prevX = e.touches[0].pageX; prevY = e.touches[0].pageY;
                 }
-            });
+            }, {passive: false});
 
-            container.onmousedown = (e) => { isDragging = true; prevMouse = { x: e.offsetX, y: e.offsetY }; };
-            window.onmouseup = () => isDragging = false;
-            container.onmousemove = (e) => {
-                if(isDragging) {
-                    const deltaX = (e.offsetX - prevMouse.x) * 0.005;
-                    const deltaY = (e.offsetY - prevMouse.y) * 0.005;
-                    mainGroup.rotation.y += deltaX;
-                    mainGroup.rotation.x += deltaY;
-                    prevMouse = { x: e.offsetX, y: e.offsetY };
-                }
-            };
+            window.addEventListener('touchend', () => isDragging = false);
 
             function animate() {
                 requestAnimationFrame(animate);
                 camera.position.z += (targetZoom - camera.position.z) * 0.1;
-
                 if(!isDragging) {
                     planet.rotation.y += 0.002;
                     textGroup.rotation.y -= 0.003;
                     photoGroup.rotation.y += 0.001;
-                    stars.rotation.y += 0.0001;
                 }
                 renderer.render(scene, camera);
             }
             animate();
         }
 
-        // --- FIREWORKS & CAKE LOGIC ---
-        function createParticles(array, x, y, isHeart) {
-            const count = isHeart ? 30 : 20;
-            const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
-            for (let i = 0; i < count; i++) {
-                const angle = (i / count) * Math.PI * 2;
-                let vx, vy;
-                if(isHeart) {
-                    vx = 16 * Math.pow(Math.sin(angle), 3) * 0.15;
-                    vy = -(13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle)) * 0.15;
-                } else {
-                    const speed = Math.random() * 3 + 2;
-                    vx = Math.cos(angle) * speed; vy = Math.sin(angle) * speed;
-                }
-                array.push({ x, y, vx, vy, alpha: 1, color, s: Math.random() * 2 + 1 });
-            }
+        function initMic() {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+                const ctx = new AudioContext(), analyser = ctx.createAnalyser(), src = ctx.createMediaStreamSource(s), proc = ctx.createScriptProcessor(256,1,1);
+                src.connect(analyser); analyser.connect(proc); proc.connect(ctx.destination);
+                proc.onaudioprocess = () => {
+                    const data = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(data);
+                    if((data.reduce((a,b)=>a+b)/data.length) > 55) matikanLilin();
+                };
+            }).catch(() => document.getElementById('cake-area').onclick = matikanLilin);
         }
 
-        const cIntro = document.getElementById('canvas-fireworks');
-        const ctxI = cIntro.getContext('2d');
-        let particlesI = [];
-        cIntro.width = window.innerWidth; cIntro.height = window.innerHeight;
-
-        function animateIntro() {
-            ctxI.fillStyle = 'rgba(0,0,0,0.15)'; ctxI.fillRect(0,0,cIntro.width,cIntro.height);
-            particlesI.forEach((p,i) => {
-                p.x += p.vx; p.y += p.vy; p.vy += 0.04; p.alpha -= 0.015;
-                ctxI.globalAlpha = p.alpha; ctxI.fillStyle = p.color;
-                ctxI.beginPath(); ctxI.arc(p.x, p.y, p.s, 0, Math.PI*2); ctxI.fill();
-                if(p.alpha <= 0) particlesI.splice(i, 1);
-            });
-            requestAnimationFrame(animateIntro);
+        function matikanLilin() {
+            document.querySelectorAll('.flame').forEach(f => f.classList.add('off'));
+            document.getElementById('wish').classList.add('show');
+            document.getElementById('hbd-surprise').classList.add('show');
+            document.getElementById('instruksi').style.display = 'none';
+            cakeSurpriseStarted = true;
         }
-        setInterval(() => {
-            if(document.getElementById('intro-overlay').style.display !== 'none')
-                createParticles(particlesI, Math.random() * cIntro.width, Math.random() * cIntro.height * 0.6, Math.random() > 0.5);
-        }, 800);
-        animateIntro();
 
-        const cCake = document.getElementById('canvas-cake');
-        const ctxC = cCake.getContext('2d');
-        let particlesC = [];
+        const cCake = document.getElementById('canvas-cake'), ctxC = cCake.getContext('2d');
         cCake.width = window.innerWidth; cCake.height = window.innerHeight;
-
-        function createCakeExplosion(x, y) { createParticles(particlesC, x, y, Math.random() > 0.4); }
-
+        let pC = [];
         function animateCake() {
-            ctxC.clearRect(0, 0, cCake.width, cCake.height);
-            particlesC.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy; p.vy += 0.05; p.alpha -= 0.012;
-                ctxC.globalAlpha = p.alpha; ctxC.fillStyle = p.color;
-                ctxC.beginPath(); ctxC.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctxC.fill();
-                if (p.alpha <= 0) particlesC.splice(i, 1);
+            ctxC.clearRect(0,0,cCake.width,cCake.height);
+            if(cakeSurpriseStarted && Math.random() < 0.05) {
+                for(let i=0; i<15; i++) pC.push({x:Math.random()*cCake.width, y:Math.random()*cCake.height*0.6, vx:(Math.random()-0.5)*5, vy:(Math.random()-0.5)*5, a:1});
+            }
+            pC.forEach((p,i) => {
+                p.x += p.vx; p.y += p.vy; p.a -= 0.02;
+                ctxC.globalAlpha = p.a; ctxC.fillStyle = '#ff4d6d';
+                ctxC.beginPath(); ctxC.arc(p.x, p.y, 2, 0, Math.PI*2); ctxC.fill();
+                if(p.a <= 0) pC.splice(i,1);
             });
-            if(cakeSurpriseStarted && Math.random() < 0.06) createCakeExplosion(Math.random()*cCake.width, Math.random()*cCake.height*0.6);
             requestAnimationFrame(animateCake);
         }
         animateCake();
-
-        window.onresize = () => {
-            cIntro.width = cCake.width = window.innerWidth;
-            cIntro.height = cCake.height = window.innerHeight;
-        };
     </script>
 </body>
 </html>
