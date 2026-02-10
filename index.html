@@ -2,13 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Happy 18th Birthday Diva!</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Prata&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.155.0/three.min.js"></script>
 
     <style>
         :root { --bg: #0a0a0a; --text: #ffffff; --accent: #ff4d6d; }
@@ -24,6 +25,14 @@
         #canvas-fireworks { position: absolute; width: 100%; height: 100%; }
         #tap-msg { position: relative; z-index: 10001; letter-spacing: 5px; font-size: 0.8rem; animation: blink 2s infinite; text-align: center; }
         @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.8; } }
+
+        #player { display: none; }
+        #musicButton {
+            position: fixed; top: 20px; right: 20px; padding: 12px 20px;
+            background-color: #ffffff10; color: white; border: 1px solid white;
+            border-radius: 8px; cursor: pointer; z-index: 9999;
+            font-weight: bold; backdrop-filter: blur(5px); display: none;
+        }
 
         /* --- 2. HERO SECTION --- */
         .hero {
@@ -61,39 +70,25 @@
         }
         .floating-text-slide2 h2 { opacity: 0; transform: translateY(40px); font-size: clamp(1.8rem, 6vw, 4.5rem); text-align: center; line-height: 1.2; }
 
-        /* --- 4. MESSAGE SECTION (SLIDE 3) --- */
+        /* --- 4. MESSAGE SECTION --- */
         .message-section {
             min-height: 100vh; width: 100%; padding: 80px 8%;
-            display: flex;
-            flex-direction: column; /* Tetap vertikal di HP */
-            gap: 40px;
+            display: flex; flex-direction: column; gap: 40px;
             align-items: center; background: #000;
         }
-
         .text-content { opacity: 0; transform: translateY(30px); text-align: center; max-width: 600px; }
         .text-content h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--accent); margin-bottom: 20px; }
         .text-content p { font-size: 1.1rem; line-height: 1.8; color: #ddd; }
         
         .collage-content { 
-            display: flex;
-            flex-direction: column; /* Video berjejer ke bawah */
-            gap: 20px; 
-            width: 100%;
-            max-width: 500px;
-            opacity: 0; 
-            transform: translateY(30px); 
+            display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px;
+            opacity: 0; transform: translateY(30px); 
         }
         .collage-content video { 
-            width: 100%; 
-            height: auto; 
-            aspect-ratio: 16/9; /* UKURAN LANDSCAPE */
-            object-fit: cover; 
-            border-radius: 12px; 
-            background: #111; 
-            border: 1px solid #333;
+            width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; 
+            border-radius: 12px; background: #111; border: 1px solid #333;
         }
 
-        /* --- RESPONSIVE UNTUK WEB --- */
         @media (min-width: 992px) {
             .message-section { flex-direction: row; justify-content: space-between; text-align: left; }
             .text-content { text-align: left; transform: translateX(-50px); }
@@ -134,7 +129,22 @@
         .wish-final { margin-top: 50px; opacity: 0; text-align: center; transition: 1s; z-index: 10; }
         .wish-final.show { opacity: 1; }
 
-        /* --- 6. VIDEO SECTION --- */
+        /* --- 6. PLANET SECTION --- */
+        .planet-section {
+            height: 100vh; width: 100%;
+            background: radial-gradient(circle at center, #000010 0%, #000000 100%);
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: grab; overflow: hidden; touch-action: none;
+        }
+        #planet-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 11; }
+        
+        #dark-overlay {
+            position: fixed; z-index: 5; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 30, 0.92); pointer-events: none;
+            transition: opacity 1.2s; opacity: 1; display: none;
+        }
+
+        /* --- 7. VIDEO SECTION --- */
         .video-section {
             min-height: 100vh; width: 100%; background: #000;
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px;
@@ -157,14 +167,15 @@
 </head>
 <body>
 
+    <div id="dark-overlay"></div>
+
     <div id="intro-overlay" onclick="startExperience()">
         <canvas id="canvas-fireworks"></canvas>
         <div id="tap-msg">PENCET LAYAR SAYANG</div>
     </div>
 
-    <audio id="musikUltah" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
-    </audio>
+    <div id="player"></div>
+    <button id="musicButton">Mainkan Musik 🎵</button>
 
     <section class="hero" id="hero-content">
         <h1>HAPPY<br>BIRTHDAY</h1>
@@ -226,6 +237,10 @@
         </div>
     </section>
 
+    <section class="planet-section" id="planet-gui">
+        <div id="planet-canvas-container"></div>
+    </section>
+
     <section class="video-section">
         <h2 style="margin-bottom: 25px; color: var(--accent); font-family: 'Playfair Display', serif;"> Di Tonton Ya Vidio dibaweah ini BOCILL</h2>
         <div class="video-container">
@@ -234,19 +249,43 @@
         <a href="https://wa.me/628123456789" class="wa-btn">CHAT AKU SEKARANG</a>
     </section>
 
-    <footer>MADE WITH LOVE &bull; 2026</footer>
+    <footer>MADE WITH LOVE &bull; 2026 BY MIKO</footer>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
+        let player;
+        const startTime = 227;
+        const endTime = 261;
+
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('player', {
+                height: '0', width: '0',
+                videoId: 'd4OMqGKBl6E',
+                playerVars: { autoplay: 0, start: startTime, end: endTime, controls: 0, loop: 1, playlist: 'd4OMqGKBl6E' },
+                events: {
+                    onStateChange: (event) => {
+                        if (event.data === YT.PlayerState.ENDED) {
+                            player.seekTo(startTime);
+                            player.playVideo();
+                        }
+                    }
+                }
+            });
+        };
+
         function startExperience() {
-            document.getElementById('musikUltah').play();
+            if (player && player.playVideo) player.playVideo();
+            document.body.classList.add('intro-started');
             document.getElementById('intro-overlay').style.opacity = '0';
             setTimeout(() => { 
                 document.getElementById('intro-overlay').style.display = 'none'; 
                 document.getElementById('hero-content').style.opacity = '1';
                 gsap.to(".hero h1, .hero-footer", { opacity: 1, y: 0, duration: 1.2, stagger: 0.3 });
                 initMic(); 
+                init3DPlanet(); 
             }, 1000);
 
             gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1 });
@@ -270,29 +309,178 @@
                         if (val > 50) matikanLilin(); 
                     };
                 }).catch(() => { document.getElementById('cake-area').onclick = matikanLilin; });
-            } else {
-                document.getElementById('cake-area').onclick = matikanLilin;
-            }
+            } else { document.getElementById('cake-area').onclick = matikanLilin; }
         }
 
         let cakeSurpriseStarted = false;
         function matikanLilin() {
             const flames = document.querySelectorAll('.flame');
             if (flames.length > 0 && flames[0].classList.contains('off')) return; 
-
             flames.forEach(f => f.classList.add('off'));
             document.getElementById('wish').classList.add('show');
             document.getElementById('instruksi').style.opacity = "0";
             document.getElementById('hbd-surprise').classList.add('show');
-            
             cakeSurpriseStarted = true;
             for(let i=0; i<15; i++) {
-                setTimeout(() => {
-                    createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7);
-                }, i * 200);
+                setTimeout(() => { createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.7); }, i * 200);
             }
         }
 
+        // --- 3D PLANET LOGIC ---
+        function init3DPlanet() {
+            const container = document.getElementById('planet-canvas-container');
+            const scene = new THREE.Scene();
+            
+            // Penyesuaian FOV Kamera untuk HP agar tidak terlalu zoom
+            const isMobile = window.innerWidth < 768;
+            const camera = new THREE.PerspectiveCamera(isMobile ? 85 : 75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const mainGroup = new THREE.Group(); 
+            scene.add(mainGroup);
+
+            const textureLoader = new THREE.TextureLoader();
+
+            // 1. PLANET (Ukuran disesuaikan untuk HP)
+            const planetRadius = isMobile ? 1.8 : 2.2;
+            const planetGeo = new THREE.SphereGeometry(planetRadius, 64, 64);
+            const planetTex = textureLoader.load('asset/fotoawal.png');
+            const planetMat = new THREE.ShaderMaterial({
+                uniforms: { time: { value: 0 }, baseTexture: { value: planetTex } },
+                vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+                fragmentShader: `uniform float time; uniform sampler2D baseTexture; varying vec2 vUv;
+                    void main() {
+                        vec2 uv = vUv;
+                        uv.x += sin(uv.y * 10.0 + time) * 0.01;
+                        gl_FragColor = texture2D(baseTexture, uv);
+                    }`
+            });
+            const planet = new THREE.Mesh(planetGeo, planetMat);
+            mainGroup.add(planet);
+
+            // 2. TEXT LAYER (Cukup 3 Kalimat Saja)
+            const textGroup = new THREE.Group();
+            const ringTexts = [
+                'HAPPY BIRTHDAY DIVA SAYANG ', 
+                'YOU ARE MY ENTIRE UNIVERSE ', 
+                'LOVE YOU TO THE MOON AND BACK '
+            ];
+            
+            ringTexts.forEach((text, i) => {
+                const canvas = document.createElement('canvas'); canvas.width = 2048; canvas.height = 128;
+                const ctx = canvas.getContext('2d');
+                ctx.font = 'bold 65px Orbitron'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+                ctx.fillText(text.repeat(3), 1024, 80);
+                const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping;
+                
+                const txtRing = new THREE.Mesh(
+                    new THREE.CylinderGeometry(planetRadius + 1.2 + i*0.8, planetRadius + 1.2 + i*0.8, 0.4, 64, 1, true),
+                    new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
+                );
+                
+                txtRing.rotation.x = Math.random() * Math.PI; 
+                txtRing.rotation.z = Math.random() * Math.PI;
+                textGroup.add(txtRing);
+            });
+            mainGroup.add(textGroup);
+
+            // 3. PHOTO LAYER (Ditambah jadi 250 foto)
+            const photoGroup = new THREE.Group();
+            const fotoAssets = ['asset/foto1.png','asset/foto2.png','asset/foto3.png','asset/foto4.png','asset/foto5.png','asset/foto6.png','asset/foto7.png','asset/foto8.png'];
+            for(let i=0; i<250; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const radius = (isMobile ? 7 : 9) + Math.random() * 5;
+                const p = new THREE.Mesh(
+                    new THREE.PlaneGeometry(0.5, 0.6),
+                    new THREE.MeshBasicMaterial({ map: textureLoader.load(fotoAssets[i % fotoAssets.length]), side: THREE.DoubleSide, transparent: true, opacity: 0.8 })
+                );
+                p.position.set(radius * Math.sin(phi) * Math.cos(angle), radius * Math.sin(phi) * Math.sin(angle), radius * Math.cos(phi));
+                p.lookAt(0, 0, 0);
+                photoGroup.add(p);
+            }
+            mainGroup.add(photoGroup);
+
+            // 4. STARFIELD
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 5000;
+            const posArray = new Float32Array(starCount * 3);
+            for(let i=0; i<starCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 250;
+            starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.08, color: 0xffffff }));
+            mainGroup.add(stars);
+
+            camera.position.z = isMobile ? 22 : 18;
+            let targetZoom = camera.position.z;
+            let isDragging = false;
+            let prevMouse = { x: 0, y: 0 };
+            let initialPinchDist = 0;
+
+            // --- INPUT CONTROL (MOUSE & TOUCH) ---
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                targetZoom += e.deltaY * 0.015;
+                targetZoom = Math.max(8, Math.min(70, targetZoom));
+            }, { passive: false });
+
+            container.addEventListener('touchstart', (e) => {
+                if(e.touches.length === 2) {
+                    initialPinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                } else {
+                    isDragging = true;
+                    prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                }
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if(e.touches.length === 2) {
+                    const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                    targetZoom += (initialPinchDist - dist) * 0.06;
+                    targetZoom = Math.max(8, Math.min(70, targetZoom));
+                    initialPinchDist = dist;
+                } else if(isDragging) {
+                    const deltaX = (e.touches[0].pageX - prevMouse.x) * 0.007;
+                    const deltaY = (e.touches[0].pageY - prevMouse.y) * 0.007;
+                    mainGroup.rotation.y += deltaX;
+                    mainGroup.rotation.x += deltaY;
+                    prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+                }
+            });
+
+            container.onmousedown = (e) => { isDragging = true; prevMouse = { x: e.offsetX, y: e.offsetY }; };
+            window.onmouseup = () => isDragging = false;
+            container.onmousemove = (e) => {
+                if(isDragging) {
+                    const deltaX = (e.offsetX - prevMouse.x) * 0.005;
+                    const deltaY = (e.offsetY - prevMouse.y) * 0.005;
+                    mainGroup.rotation.y += deltaX;
+                    mainGroup.rotation.x += deltaY;
+                    prevMouse = { x: e.offsetX, y: e.offsetY };
+                }
+            };
+
+            function animate() {
+                requestAnimationFrame(animate);
+                planetMat.uniforms.time.value = performance.now() * 0.001;
+                camera.position.z += (targetZoom - camera.position.z) * 0.1;
+
+                if(!isDragging) {
+                    planet.rotation.y += 0.002;
+                    textGroup.rotation.y -= 0.003;
+                    textGroup.rotation.x += 0.0005;
+                    photoGroup.rotation.y += 0.001;
+                    stars.rotation.y += 0.0001;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        // --- FIREWORKS & CAKE LOGIC (TETAP SAMA) ---
         function createParticles(array, x, y, isHeart) {
             const count = isHeart ? 35 : 25;
             const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
@@ -300,9 +488,8 @@
                 const angle = (i / count) * Math.PI * 2;
                 let vx, vy;
                 if(isHeart) {
-                    const tx = 16 * Math.pow(Math.sin(angle), 3);
-                    const ty = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
-                    vx = tx * 0.18; vy = ty * 0.18;
+                    vx = 16 * Math.pow(Math.sin(angle), 3) * 0.18;
+                    vy = -(13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle)) * 0.18;
                 } else {
                     const speed = Math.random() * 4 + 3;
                     vx = Math.cos(angle) * speed; vy = Math.sin(angle) * speed;
@@ -337,9 +524,7 @@
         let particlesC = [];
         cCake.width = window.innerWidth; cCake.height = window.innerHeight;
 
-        function createCakeExplosion(x, y) {
-            createParticles(particlesC, x, y, Math.random() > 0.4);
-        }
+        function createCakeExplosion(x, y) { createParticles(particlesC, x, y, Math.random() > 0.4); }
 
         function animateCake() {
             ctxC.clearRect(0, 0, cCake.width, cCake.height);
@@ -349,18 +534,15 @@
                 ctxC.beginPath(); ctxC.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctxC.fill();
                 if (p.alpha <= 0) particlesC.splice(i, 1);
             });
-            if(cakeSurpriseStarted && Math.random() < 0.06) {
-                createCakeExplosion(Math.random() * cCake.width, Math.random() * cCake.height * 0.6);
-            }
+            if(cakeSurpriseStarted && Math.random() < 0.06) createCakeExplosion(Math.random()*cCake.width, Math.random()*cCake.height*0.6);
             requestAnimationFrame(animateCake);
         }
         animateCake();
 
-        window.addEventListener('resize', () => {
+        window.onresize = () => {
             cIntro.width = cCake.width = window.innerWidth;
             cIntro.height = cCake.height = window.innerHeight;
-        });
+        };
     </script>
 </body>
 </html>
-
