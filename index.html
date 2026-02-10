@@ -331,13 +331,12 @@
             const container = document.getElementById('planet-canvas-container');
             const scene = new THREE.Scene();
             
-            // Penyesuaian FOV Kamera untuk HP agar tidak terlalu zoom
             const isMobile = window.innerWidth < 768;
             const camera = new THREE.PerspectiveCamera(isMobile ? 85 : 75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
             
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.offsetWidth, container.offsetHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Kurangi pixel ratio biar lancar
             container.appendChild(renderer.domElement);
 
             const mainGroup = new THREE.Group(); 
@@ -345,20 +344,11 @@
 
             const textureLoader = new THREE.TextureLoader();
 
-            // 1. PLANET (Ukuran disesuaikan untuk HP)
+            // 1. PLANET
             const planetRadius = isMobile ? 1.8 : 2.2;
-            const planetGeo = new THREE.SphereGeometry(planetRadius, 64, 64);
+            const planetGeo = new THREE.SphereGeometry(planetRadius, 32, 32); // Segmen dikurangi biar enteng
             const planetTex = textureLoader.load('asset/fotoawal.png');
-            const planetMat = new THREE.ShaderMaterial({
-                uniforms: { time: { value: 0 }, baseTexture: { value: planetTex } },
-                vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-                fragmentShader: `uniform float time; uniform sampler2D baseTexture; varying vec2 vUv;
-                    void main() {
-                        vec2 uv = vUv;
-                        uv.x += sin(uv.y * 10.0 + time) * 0.01;
-                        gl_FragColor = texture2D(baseTexture, uv);
-                    }`
-            });
+            const planetMat = new THREE.MeshBasicMaterial({ map: planetTex }); // Ganti shader ke basic biar super enteng
             const planet = new THREE.Mesh(planetGeo, planetMat);
             mainGroup.add(planet);
 
@@ -371,14 +361,14 @@
             ];
             
             ringTexts.forEach((text, i) => {
-                const canvas = document.createElement('canvas'); canvas.width = 2048; canvas.height = 128;
+                const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 64; // Resolusi canvas dikurangi
                 const ctx = canvas.getContext('2d');
-                ctx.font = 'bold 65px Orbitron'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-                ctx.fillText(text.repeat(3), 1024, 80);
+                ctx.font = 'bold 35px Orbitron'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+                ctx.fillText(text.repeat(2), 512, 45);
                 const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping;
                 
                 const txtRing = new THREE.Mesh(
-                    new THREE.CylinderGeometry(planetRadius + 1.2 + i*0.8, planetRadius + 1.2 + i*0.8, 0.4, 64, 1, true),
+                    new THREE.CylinderGeometry(planetRadius + 1.2 + i*0.8, planetRadius + 1.2 + i*0.8, 0.3, 32, 1, true),
                     new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
                 );
                 
@@ -388,16 +378,16 @@
             });
             mainGroup.add(textGroup);
 
-            // 3. PHOTO LAYER (Ditambah jadi 250 foto)
+            // 3. PHOTO LAYER (DIKURANGI JADI 40 BIAR ENTENG DI GITHUB)
             const photoGroup = new THREE.Group();
             const fotoAssets = ['asset/foto1.png','asset/foto2.png','asset/foto3.png','asset/foto4.png','asset/foto5.png','asset/foto6.png','asset/foto7.png','asset/foto8.png'];
-            for(let i=0; i<250; i++) {
+            for(let i=0; i<40; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const phi = Math.acos(2 * Math.random() - 1);
-                const radius = (isMobile ? 7 : 9) + Math.random() * 5;
+                const radius = (isMobile ? 6 : 8) + Math.random() * 3;
                 const p = new THREE.Mesh(
-                    new THREE.PlaneGeometry(0.5, 0.6),
-                    new THREE.MeshBasicMaterial({ map: textureLoader.load(fotoAssets[i % fotoAssets.length]), side: THREE.DoubleSide, transparent: true, opacity: 0.8 })
+                    new THREE.PlaneGeometry(0.7, 0.9),
+                    new THREE.MeshBasicMaterial({ map: textureLoader.load(fotoAssets[i % fotoAssets.length]), side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
                 );
                 p.position.set(radius * Math.sin(phi) * Math.cos(angle), radius * Math.sin(phi) * Math.sin(angle), radius * Math.cos(phi));
                 p.lookAt(0, 0, 0);
@@ -405,44 +395,28 @@
             }
             mainGroup.add(photoGroup);
 
-            // 4. STARFIELD
+            // 4. STARFIELD (DIKURANGI JADI 2000)
             const starGeo = new THREE.BufferGeometry();
-            const starCount = 5000;
+            const starCount = 2000;
             const posArray = new Float32Array(starCount * 3);
-            for(let i=0; i<starCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 250;
+            for(let i=0; i<starCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 200;
             starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.08, color: 0xffffff }));
+            const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xffffff }));
             mainGroup.add(stars);
 
-            camera.position.z = isMobile ? 22 : 18;
+            camera.position.z = isMobile ? 20 : 16;
             let targetZoom = camera.position.z;
             let isDragging = false;
             let prevMouse = { x: 0, y: 0 };
-            let initialPinchDist = 0;
 
-            // --- INPUT CONTROL (MOUSE & TOUCH) ---
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                targetZoom += e.deltaY * 0.015;
-                targetZoom = Math.max(8, Math.min(70, targetZoom));
-            }, { passive: false });
-
+            // --- INPUT CONTROL ---
             container.addEventListener('touchstart', (e) => {
-                if(e.touches.length === 2) {
-                    initialPinchDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-                } else {
-                    isDragging = true;
-                    prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
-                }
+                isDragging = true;
+                prevMouse = { x: e.touches[0].pageX, y: e.touches[0].pageY };
             });
 
             container.addEventListener('touchmove', (e) => {
-                if(e.touches.length === 2) {
-                    const dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-                    targetZoom += (initialPinchDist - dist) * 0.06;
-                    targetZoom = Math.max(8, Math.min(70, targetZoom));
-                    initialPinchDist = dist;
-                } else if(isDragging) {
+                if(isDragging) {
                     const deltaX = (e.touches[0].pageX - prevMouse.x) * 0.007;
                     const deltaY = (e.touches[0].pageY - prevMouse.y) * 0.007;
                     mainGroup.rotation.y += deltaX;
@@ -465,13 +439,11 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                planetMat.uniforms.time.value = performance.now() * 0.001;
                 camera.position.z += (targetZoom - camera.position.z) * 0.1;
 
                 if(!isDragging) {
                     planet.rotation.y += 0.002;
                     textGroup.rotation.y -= 0.003;
-                    textGroup.rotation.x += 0.0005;
                     photoGroup.rotation.y += 0.001;
                     stars.rotation.y += 0.0001;
                 }
@@ -480,21 +452,21 @@
             animate();
         }
 
-        // --- FIREWORKS & CAKE LOGIC (TETAP SAMA) ---
+        // --- FIREWORKS & CAKE LOGIC ---
         function createParticles(array, x, y, isHeart) {
-            const count = isHeart ? 35 : 25;
+            const count = isHeart ? 30 : 20;
             const color = isHeart ? '#ff4d6d' : `hsl(${Math.random() * 360}, 80%, 60%)`;
             for (let i = 0; i < count; i++) {
                 const angle = (i / count) * Math.PI * 2;
                 let vx, vy;
                 if(isHeart) {
-                    vx = 16 * Math.pow(Math.sin(angle), 3) * 0.18;
-                    vy = -(13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle)) * 0.18;
+                    vx = 16 * Math.pow(Math.sin(angle), 3) * 0.15;
+                    vy = -(13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle)) * 0.15;
                 } else {
-                    const speed = Math.random() * 4 + 3;
+                    const speed = Math.random() * 3 + 2;
                     vx = Math.cos(angle) * speed; vy = Math.sin(angle) * speed;
                 }
-                array.push({ x, y, vx, vy, alpha: 1, color, s: Math.random() * 3 + 1 });
+                array.push({ x, y, vx, vy, alpha: 1, color, s: Math.random() * 2 + 1 });
             }
         }
 
@@ -516,7 +488,7 @@
         setInterval(() => {
             if(document.getElementById('intro-overlay').style.display !== 'none')
                 createParticles(particlesI, Math.random() * cIntro.width, Math.random() * cIntro.height * 0.6, Math.random() > 0.5);
-        }, 600);
+        }, 800);
         animateIntro();
 
         const cCake = document.getElementById('canvas-cake');
