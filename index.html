@@ -263,7 +263,7 @@
     <section class="video-section" id="section-video">
         <h2 style="margin-bottom: 25px; color: var(--accent); font-family: 'Playfair Display', serif;"> Di Tonton Ya Vidio aku ini BOCILL</h2>
         <div class="video-container">
-            <video controls playsinline><source src="asset/videoucapan.mp4" type="video/mp4"></video>
+            <video id="vidio-ucapan" controls playsinline><source src="asset/videoucapan.mp4" type="video/mp4"></video>
         </div>
         <a href="https://wa.me/6289519877329" class="wa-btn">CHAT AKU SEKARANG</a>
     </section>
@@ -303,9 +303,9 @@
         };
 
         function startExperience() {
-            // Musik diputar saat klik pertama
             if (player && player.playVideo) {
                 player.playVideo();
+                player.setVolume(100); // Pastikan volume awal penuh
             }
             
             document.body.classList.add('intro-started');
@@ -321,11 +321,20 @@
             gsap.to(".anim-scroll", { scrollTrigger: { trigger: ".scroll-wrapper", start: "top 50%" }, opacity: 1, y: 0, duration: 1 });
             gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 80%" }, opacity: 1, y: 0, duration: 1 });
             gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0, duration: 1 });
+
+            // LOGIKA OTOMATIS: Kecilkan volume musik saat scroll sampai ke video ucapan
+            ScrollTrigger.create({
+                trigger: "#section-video",
+                start: "top 60%", // Ketika bagian video muncul 40% di layar
+                onEnter: () => { if(player) player.setVolume(15); }, // Kecilkan ke 15%
+                onLeaveBack: () => { if(player) player.setVolume(100); } // Balikkan ke 100% jika scroll ke atas
+            });
         }
 
-        // Fungsi scroll otomatis ke video
         function scrollToVideo() {
             document.getElementById('section-video').scrollIntoView({ behavior: 'smooth' });
+            // Saat tombol diklik, langsung kecilkan volume
+            if(player) player.setVolume(15);
         }
 
         function initMic() {
