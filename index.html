@@ -138,7 +138,6 @@
         }
         #planet-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 11; }
         
-        /* TOMBOL BARU DI PLANET */
         .btn-lanjut-planet {
             position: absolute; bottom: 40px; z-index: 100;
             padding: 12px 25px; background: transparent; border: 1px solid var(--accent);
@@ -186,8 +185,11 @@
         <div id="tap-msg">PENCET LAYAR SAYANG</div>
     </div>
 
-    <div id="player"></div>
-    <button id="musicButton">Mainkan Musik </button>
+    <audio id="bgMusic" loop>
+        <source src="asset/musik1.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="musicButton">Mainkan Musik</button>
 
     <section class="hero" id="hero-content">
         <h1>HAPPY<br>BIRTHDAY</h1>
@@ -270,42 +272,16 @@
 
     <footer>I LOVE YOU DIVA SAYANG &bull; 12,02,2026 BY ZAKI</footer>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
-
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        let player;
-        const startTime = 227;
-        const endTime = 261;
-
-        window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('player', {
-                height: '0', width: '0',
-                videoId: 'd4OMqGKBl6E',
-                playerVars: { 
-                    autoplay: 0, 
-                    start: startTime, 
-                    end: endTime, 
-                    controls: 0, 
-                    loop: 1, 
-                    playlist: 'd4OMqGKBl6E' 
-                },
-                events: {
-                    onStateChange: (event) => {
-                        if (event.data === YT.PlayerState.ENDED) {
-                            player.seekTo(startTime);
-                            player.playVideo();
-                        }
-                    }
-                }
-            });
-        };
+        const music = document.getElementById('bgMusic');
 
         function startExperience() {
-            if (player && player.playVideo) {
-                player.playVideo();
-                player.setVolume(100);
+            // Putar musik langsung setelah klik pertama (Intro)
+            if (music) {
+                music.play().catch(e => console.log("Audio play error:", e));
+                music.volume = 1.0;
             }
             
             document.body.classList.add('intro-started');
@@ -322,18 +298,18 @@
             gsap.to(".text-content", { scrollTrigger: { trigger: ".message-section", start: "top 80%" }, opacity: 1, y: 0, duration: 1 });
             gsap.to(".collage-content", { scrollTrigger: { trigger: ".message-section", start: "top 70%" }, opacity: 1, y: 0, duration: 1 });
 
-            // LOGIKA OTOMATIS: Musik jadi sedang (40%) saat di section video
+            // Otomatis kecilkan volume musik saat di section video ucapan
             ScrollTrigger.create({
                 trigger: "#section-video",
                 start: "top 70%",
-                onEnter: () => { if(player) player.setVolume(40); }, 
-                onLeaveBack: () => { if(player) player.setVolume(100); }
+                onEnter: () => { if(music) music.volume = 0.3; }, 
+                onLeaveBack: () => { if(music) music.volume = 1.0; }
             });
         }
 
         function scrollToVideo() {
             document.getElementById('section-video').scrollIntoView({ behavior: 'smooth' });
-            if(player) player.setVolume(40);
+            if(music) music.volume = 0.3;
         }
 
         function initMic() {
